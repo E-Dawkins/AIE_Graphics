@@ -7,6 +7,9 @@
 
 #include "Planet.h"
 
+#include "Mesh.h"
+#include "Shader.h"
+
 class GraphicsApp : public aie::Application {
 public:
 
@@ -23,9 +26,15 @@ public:
 
 protected:
 
+	bool LaunchShaders();
+	
 	// camera transforms
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;
 
 	std::vector<Planet*> m_planets;
+
+	aie::ShaderProgram	m_simpleShader;
+	Mesh				m_quadMesh;
+	glm::mat4			m_quadTransform;
 };

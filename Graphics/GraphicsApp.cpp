@@ -25,7 +25,7 @@ bool GraphicsApp::startup() {
 
 	// CreatePlanets();
 	
-	return true;
+	return LaunchShaders();
 }
 
 void GraphicsApp::shutdown() {
@@ -60,6 +60,20 @@ void GraphicsApp::draw() {
 	// Draw planets
 	for (auto planet : m_planets)
 		planet->Draw();
+
+#pragma region SimpleShader
+	// Bind the shader
+	m_simpleShader.bind();
+
+	// Bind the transform
+
+	auto pvm = m_projectionMatrix * m_viewMatrix * m_quadTransform;
+	m_simpleShader.bindUniform("ProjectionViewModel", pvm);
+
+	// Draw the quad using Mesh's draw
+	m_quadMesh.Draw();
+	
+#pragma endregion
 	
 	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
 }
@@ -98,4 +112,29 @@ void GraphicsApp::CreatePlanets()
 
 	// Neptune
 	m_planets.push_back(new Planet(vec3(15, 0, 0), 0.7f, vec4(0, 0.3, 1, 1), earthRadians * (365.f / 60190.f)));
+}
+
+bool GraphicsApp::LaunchShaders()
+{
+	// Load the simple vert and frag shaders into the m_simpleShader variable
+	m_simpleShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
+	m_simpleShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/simple.frag");
+
+	if (!m_simpleShader.link())
+	{
+		printf("Simple Shader has an Error: %s\n", m_simpleShader.getLastError());
+		return false;
+	}
+
+	m_quadMesh.InitialiseQuad();
+
+	// This is a 10 'unit' wide quad
+	m_quadTransform = {
+		10, 0, 0, 0,
+		0, 10, 0, 0,
+		0, 0, 10, 0,
+		0, 0, 0, 1
+	};
+	
+	return true;
 }
