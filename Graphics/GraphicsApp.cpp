@@ -23,7 +23,7 @@ bool GraphicsApp::startup() {
 	m_viewMatrix = lookAt(vec3(20), vec3(0), vec3(0, 1, 0));
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, 16.0f / 9.0f, 0.1f, 1000.0f);
 
-	// CreatePlanets();
+	CreatePlanets();
 	
 	return LaunchShaders();
 }
