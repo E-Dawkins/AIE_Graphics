@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Provided">
+      <UniqueIdentifier>{66e77e7c-8faf-46fa-bac6-22b0ed817db9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Provided">
+      <UniqueIdentifier>{c36a498d-6c22-4e7e-855d-a1d53d745376}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,9 +27,15 @@
     <ClCompile Include="GraphicsApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Planet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Planet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
