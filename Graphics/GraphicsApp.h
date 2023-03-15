@@ -9,6 +9,7 @@
 
 #include "Mesh.h"
 #include "Shader.h"
+#include "OBJMesh.h"
 
 class GraphicsApp : public aie::Application {
 public:
@@ -22,19 +23,31 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
-	void CreatePlanets();
 
 protected:
 
+	void CreatePlanets();
+	
 	bool LaunchShaders();
 	
+	bool QuadLoader();
+	void QuadDraw(mat4 _pvm);
+	
+	bool BunnyLoader();
+	void BunnyDraw(mat4 _pvm);
+	
 	// camera transforms
-	glm::mat4	m_viewMatrix;
-	glm::mat4	m_projectionMatrix;
+	mat4 m_viewMatrix;
+	mat4 m_projectionMatrix;
 
 	std::vector<Planet*> m_planets;
 
 	aie::ShaderProgram	m_simpleShader;
+	aie::ShaderProgram	m_colorShader;
+	
 	Mesh				m_quadMesh;
-	glm::mat4			m_quadTransform;
+	mat4				m_quadTransform;
+
+	aie::OBJMesh		m_bunnyMesh;
+	mat4				m_bunnyTransform;
 };

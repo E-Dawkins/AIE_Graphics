@@ -16,12 +16,16 @@ public:
 
     mat4 RotateAround(vec3 _point, vec3 _axis, float _radians);
 
+
+    void HasRing(bool _hasRing);
+    float GetAverageScale(mat4 _transform);
+
     mat4 transform;
     
 protected:
-    vec3 m_center;
-    float m_radius;
     vec4 m_color;
-    float m_radians;
+    float m_rotationRadians;
     Planet* m_parent;
+    
+    bool m_hasRing;
 };

@@ -61,27 +61,20 @@ void GraphicsApp::draw() {
 	for (auto planet : m_planets)
 		planet->Draw();
 
-#pragma region SimpleShader
-	// Bind the shader
-	m_simpleShader.bind();
-
-	// Bind the transform
-
-	auto pvm = m_projectionMatrix * m_viewMatrix * m_quadTransform;
-	m_simpleShader.bindUniform("ProjectionViewModel", pvm);
-
-	// Draw the quad using Mesh's draw
-	m_quadMesh.Draw();
+	auto pv = m_projectionMatrix * m_viewMatrix;
 	
-#pragma endregion
+	// Draw the quad
+	QuadDraw(pv * m_quadTransform);
+
+	// Draw the bunny
+	BunnyDraw(pv * m_bunnyTransform);
 	
-	Gizmos::draw(m_projectionMatrix * m_viewMatrix);
+	Gizmos::draw(pv);
 }
 
 void GraphicsApp::CreatePlanets()
 {
 	float earthRadians = 0.01f;
-	float moonRadians = 0.1f;
 
 	// Sun
 	m_planets.push_back(new Planet(vec3(0), 3, vec4(1, 0.3, 0, 1), 0.1f));
@@ -96,7 +89,7 @@ void GraphicsApp::CreatePlanets()
 	m_planets.push_back(new Planet(vec3(6, 0, 0), 0.5f, vec4(0, 0.6, 0.7, 1), earthRadians));
 
 	// Moon
-	m_planets.push_back(new Planet(vec3(0), 0.1f, vec4(1), moonRadians, m_planets.back()));
+	m_planets.push_back(new Planet(vec3(1, 0, 0), 0.1f, vec4(1), earthRadians * (365.f / 27.f), m_planets.back()));
 
 	// Mars
 	m_planets.push_back(new Planet(vec3(8, 0, 0), 0.3f, vec4(1, 0.2, 0.2, 1), earthRadians * (365.f / 687.f)));
@@ -106,7 +99,8 @@ void GraphicsApp::CreatePlanets()
 
 	// Saturn
 	m_planets.push_back(new Planet(vec3(11, 0, 0), 0.7f, vec4(1, 0.8, 0, 1), earthRadians * (365.f / 10759.f)));
-
+	m_planets.back()->HasRing(true);
+	
 	// Uranus
 	m_planets.push_back(new Planet(vec3(13, 0, 0), 0.7f, vec4(0, 0.6, 1, 1), earthRadians * (365.f / 30687.f)));
 
@@ -115,6 +109,17 @@ void GraphicsApp::CreatePlanets()
 }
 
 bool GraphicsApp::LaunchShaders()
+{
+	if (!QuadLoader())
+		return false;
+
+	if (!BunnyLoader())
+		return false;
+	
+	return true;
+}
+
+bool GraphicsApp::QuadLoader()
 {
 	// Load the simple vert and frag shaders into the m_simpleShader variable
 	m_simpleShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert");
@@ -126,8 +131,18 @@ bool GraphicsApp::LaunchShaders()
 		return false;
 	}
 
-	m_quadMesh.InitialiseQuad();
+	// Defined as 4 vertices for the 2 triangles
+	Mesh::Vertex vertices[4];
 
+	vertices[0].position = {-0.5f, 0,  0.5f, 1};
+	vertices[1].position = { 0.5f, 0,  0.5f, 1};
+	vertices[2].position = {-0.5f, 0, -0.5f, 1};
+	vertices[3].position = { 0.5f, 0, -0.5f, 1};
+
+	unsigned int indices[6] = {0, 1, 2, 2, 1, 3};
+
+	m_quadMesh.Initialise(4, vertices, 6, indices);
+	
 	// This is a 10 'unit' wide quad
 	m_quadTransform = {
 		10, 0, 0, 0,
@@ -135,6 +150,62 @@ bool GraphicsApp::LaunchShaders()
 		0, 0, 10, 0,
 		0, 0, 0, 1
 	};
-	
+
 	return true;
+}
+
+void GraphicsApp::QuadDraw(mat4 _pvm)
+{
+	// Bind the shader
+	m_simpleShader.bind();
+
+	// Bind the transform
+	m_simpleShader.bindUniform("ProjectionViewModel", _pvm);
+
+	// Draw the quad using the mesh's draw
+	m_quadMesh.Draw();
+}
+
+bool GraphicsApp::BunnyLoader()
+{
+	m_colorShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/color.vert");
+	m_colorShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/color.frag");
+
+	// Check if the color shader has loaded successfully
+	if (!m_colorShader.link())
+	{
+		printf("Color Shader Error: %s\n", m_colorShader.getLastError());
+		return false;
+	}
+
+	// Check if bunny mesh has loaded successfully
+	if (!m_bunnyMesh.load("./stanford/Bunny.obj"))
+	{
+		printf("Bunny Mesh Error:\n");
+		return false;
+	}
+
+	m_bunnyTransform = {
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
+
+	return true;
+}
+
+void GraphicsApp::BunnyDraw(mat4 _pvm)
+{
+	// Bind the shader
+	m_colorShader.bind();
+
+	// Bind the transform
+	m_colorShader.bindUniform("ProjectionViewModel", _pvm);
+
+	// Bind the color
+	m_colorShader.bindUniform("BaseColor", vec4(1, 0, 0, 0.5f));
+
+	// Draw the obj using the mesh's draw
+	m_bunnyMesh.draw();
 }
