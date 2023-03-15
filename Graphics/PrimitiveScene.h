@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <map>
+
 #include "Mesh.h"
 #include "Scene.h"
 #include "Shader.h"
@@ -20,11 +22,19 @@ public:
     void ImGuiRefresher() override;
 
 protected:
-    void LoadQuad();
-    void QuadDraw();
+    
+    void LoadShader();
+    
+    void MakeQuad(vec3 _position, vec3 _scale);
+    void MakeCube(vec3 _position, vec3 _scale);
+
+    void DrawMesh(Mesh& _mesh, mat4& _transform, vec4 _color);
 
     aie::ShaderProgram	m_colorShader;
 
     Mesh				m_quadMesh;
     mat4				m_quadTransform;
+
+    Mesh                m_cubeMesh;
+    mat4                m_cubeTransform;
 };

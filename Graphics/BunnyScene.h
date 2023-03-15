@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Light.h"
 #include "OBJMesh.h"
 #include "Scene.h"
 #include "Shader.h"
@@ -22,12 +23,6 @@ protected:
 
     aie::OBJMesh		m_bunnyMesh;
     mat4                m_bunnyTransform;
-
-    struct Light
-    {
-        vec3 direction;
-        vec3 color;
-    };
 
     Light m_light;
     vec3 m_ambientLight;

@@ -28,7 +28,7 @@ void BunnyScene::Draw()
 
     // Bind the camera position
     m_phongShader.bindUniform("CameraPosition",
-        vec3(glm::inverse(m_graphicsApp->viewMatrix)[3]));
+        vec3(inverse(m_graphicsApp->viewMatrix)[3]));
 
     mat4 pvm = m_graphicsApp->pvMatrix * m_bunnyTransform;
     
@@ -60,7 +60,7 @@ void BunnyScene::LoadBunny()
     // Check if the color shader has loaded successfully
     if (!m_phongShader.link())
     {
-        printf("Color Shader Error: %s\n", m_phongShader.getLastError());
+        printf("Phong Shader Error: %s\n", m_phongShader.getLastError());
         return;
     }
 
