@@ -3,13 +3,14 @@
 int main() {
 	
 	// allocation
-	auto app = new GraphicsApp();
+	GraphicsApp* app;
+
+	GraphicsApp::create();
 
 	// initialise and loop
-	app->run("AIE", 1280, 720, false);
+	GraphicsApp::instance->run("AIE", 1280, 720, false);
 
-	// deallocation
-	delete app;
+	GraphicsApp::destroy();
 
 	return 0;
 }

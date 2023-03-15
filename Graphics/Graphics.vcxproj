@@ -166,6 +166,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BunnyScene.cpp" />
     <ClCompile Include="GraphicsApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -244,16 +245,22 @@
       <AdditionalIncludeDirectories>C:\Users\s213634\Desktop\GitHub\AIE_Graphics\bootstrap;C:\Users\s213634\Desktop\GitHub\AIE_Graphics\dependencies/imgui;C:\Users\s213634\Desktop\GitHub\AIE_Graphics\dependencies/glm;</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="PrimitiveScene.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SolarSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BunnyScene.h" />
     <ClInclude Include="GraphicsApp.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="Planet.h" />
+    <ClInclude Include="PrimitiveScene.h" />
     <ClInclude Include="RenderTarget.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SolarSystem.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
