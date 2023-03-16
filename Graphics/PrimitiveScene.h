@@ -46,4 +46,7 @@ protected:
     
     Mesh                m_pyramidMesh;
     mat4                m_pyramidTransform;
+
+    Mesh                m_gridMesh;
+    mat4                m_gridTransform;
 };

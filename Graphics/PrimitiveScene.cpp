@@ -8,20 +8,21 @@ void PrimitiveScene::Start()
     MakeQuad();
     MakeCube();
     MakePyramid();
+    MakeGrid(10, 10);
 
     // Set transforms
-    m_quadTransform = scale(mat4(1), vec3(10));
+    m_quadTransform = translate(mat4(1), vec3(0, 1, 0));
     
     m_cubeTransform = translate(mat4(1), vec3(0, 3, 0));
-    m_cubeTransform = scale(m_cubeTransform, vec3(3));
 
-    m_pyramidTransform = translate(mat4(1), vec3(3, 1, 0));
+    m_pyramidTransform = translate(mat4(1), vec3(3, 2, 0));
+
+    m_gridTransform = mat4(1);
 }
 
 void PrimitiveScene::Update(float _dt)
 {
-    m_cubeTransform = rotate(m_cubeTransform, _dt, normalize(vec3(1, 1, 0)));
-    m_pyramidTransform = rotate(m_pyramidTransform, _dt, normalize(vec3(1, 1, 0)));
+    m_cubeTransform = rotate(m_cubeTransform, _dt, vec3(1, 1, -1));
 }
 
 void PrimitiveScene::Draw()
@@ -29,6 +30,7 @@ void PrimitiveScene::Draw()
     DrawMesh(m_quadMesh, m_quadTransform, vec4(0.5f, 0, 0.75f, 1));
     DrawMesh(m_cubeMesh, m_cubeTransform, vec4(1, 0, 0, 1));
     DrawMesh(m_pyramidMesh, m_pyramidTransform, vec4(0, 1, 0, 1));
+    DrawMesh(m_gridMesh, m_gridTransform, vec4(0, 0, 1, 1));
 }
 
 void PrimitiveScene::ImGuiRefresher()
@@ -118,14 +120,46 @@ void PrimitiveScene::MakePyramid()
 
 void PrimitiveScene::MakeGrid(int _rows, int _cols, vec2 _extents)
 {
+    // Initialise vertex array
     float quadWidth = (_extents.x * 2.f) / _rows;
     float quadHeight = (_extents.y * 2.f) / _cols;
-
-    // Initialise vertex array
     int vertexCount = (_rows + 1) * (_cols + 1);
-    Mesh::Vertex vertices[vertexCount];
+    
+    std::unique_ptr<Mesh::Vertex[]> vertices{new Mesh::Vertex[vertexCount]};
 
-    // Loop to 
+    for (int i = 0; i < _rows + 1; i++)
+    {
+        for (int j = 0; j < _cols + 1; j++)
+        {
+            int index = i * (_rows + 1) + j;
+
+            float vertXPos = -_extents.x + quadWidth * j;
+            float vertZPos = -_extents.y + quadHeight * i;
+            
+            vertices[index].position = {vertXPos, 0, vertZPos, 1};
+        }
+    }
+
+    // Initialise indices for each quad in grid
+    int quadCount = _rows * _cols;
+    int indexCount = 6 * quadCount;
+    
+    std::unique_ptr<unsigned int[]> indices{new unsigned int[indexCount]};
+    
+    for (int i = 0; i < quadCount; i++)
+    {
+        int startIndex = 6 * i;
+        int offsetI = i + (i / _cols);
+        
+        indices[startIndex] = offsetI + 1 + _cols;
+        indices[startIndex + 1] = offsetI + 1;
+        indices[startIndex + 2] = offsetI;
+        indices[startIndex + 3] = offsetI + 1 + _cols + 1;
+        indices[startIndex + 4] = offsetI + 1;
+        indices[startIndex + 5] = offsetI + 1 + _cols;
+    }
+
+    m_gridMesh.Initialise(vertexCount, vertices.get(), indexCount, indices.get());
 }
 
 void PrimitiveScene::DrawMesh(Mesh& _mesh, mat4& _transform, vec4 _color)
