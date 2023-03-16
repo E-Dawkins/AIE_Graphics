@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Light.h"
 #include "OBJMesh.h"
 #include "Scene.h"
 #include "Shader.h"
@@ -24,6 +23,6 @@ protected:
     aie::OBJMesh		m_bunnyMesh;
     mat4                m_bunnyTransform;
 
-    Light m_light;
+    GraphicsApp::Light m_light;
     vec3 m_ambientLight;
 };

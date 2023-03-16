@@ -180,7 +180,6 @@
   <ItemGroup>
     <ClInclude Include="BunnyScene.h" />
     <ClInclude Include="GraphicsApp.h" />
-    <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="Planet.h" />

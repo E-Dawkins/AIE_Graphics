@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 using glm::mat4;
+using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 
@@ -25,8 +26,13 @@ protected:
     
     void LoadShader();
     
-    void MakeQuad(vec3 _position, vec3 _scale);
-    void MakeCube(vec3 _position, vec3 _scale);
+    void MakeQuad();
+    void MakeCube();
+    void MakeCylinder();
+    void MakePyramid();
+    void MakeSphere();
+    void MakeCone();
+    void MakeGrid(int _rows, int _cols, vec2 _extents = vec2(5));
 
     void DrawMesh(Mesh& _mesh, mat4& _transform, vec4 _color);
 
@@ -37,4 +43,7 @@ protected:
 
     Mesh                m_cubeMesh;
     mat4                m_cubeTransform;
+    
+    Mesh                m_pyramidMesh;
+    mat4                m_pyramidTransform;
 };

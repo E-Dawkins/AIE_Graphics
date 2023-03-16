@@ -33,6 +33,12 @@ public:
 	mat4 projectionMatrix = mat4(1);
 	mat4 pvMatrix = mat4(1);
 
+	struct Light
+	{
+		glm::vec3 direction;
+		glm::vec3 color;
+	};
+
 protected:
 	Scene* m_scene = nullptr;
 };
