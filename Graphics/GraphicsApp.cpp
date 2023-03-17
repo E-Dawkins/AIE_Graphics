@@ -23,7 +23,7 @@ bool GraphicsApp::startup() {
 	Gizmos::create(10000, 10000, 10000, 10000);
 
 	// create simple camera transforms
-	viewMatrix = lookAt(vec3(20), vec3(0), vec3(0, 1, 0));
+	viewMatrix = lookAt(vec3(10), vec3(0), vec3(0, 1, 0));
 	projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, 16.0f / 9.0f, 0.1f, 1000.0f);
 	
 	m_scene = new PrimitiveScene();

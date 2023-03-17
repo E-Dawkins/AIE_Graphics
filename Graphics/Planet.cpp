@@ -38,7 +38,7 @@ void Planet::Draw()
         aie::Gizmos::addSphere(transform[3], averageScale, 10, 10, m_color, &m_parent->transform);
 
     // Transform relative to world origin
-    else aie::Gizmos::addSphere(transform[3], averageScale, 2, 3, m_color);
+    else aie::Gizmos::addSphere(transform[3], averageScale, 10, 10, m_color);
 
     if (m_hasRing)
         aie::Gizmos::addRing(transform[3], averageScale * 1.25f, averageScale * 1.75f, 10, m_color);

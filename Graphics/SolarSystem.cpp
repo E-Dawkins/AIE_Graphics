@@ -2,7 +2,7 @@
 
 void SolarSystem::Start()
 {
-    float earthRadians = 0.01f;
+    float earthRadians = 0.1f;
 
     // Sun
     m_planets.push_back(new Planet(vec3(0), 3, vec4(1, 0.3, 0, 1), 0.1f));

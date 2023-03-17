@@ -13,34 +13,36 @@ void PrimitiveScene::Start()
     MakeCylinder(10);
 
     // Set transforms
-    m_quadTransform = translate(mat4(1), vec3(0, 1, 0));
+    m_quadTransform = translate(mat4(1), vec3(2, 0, 2));
     
-    m_cubeTransform = translate(mat4(1), vec3(0, 3, 0));
+    m_cubeTransform = translate(mat4(1), vec3(-2, 0, -2));
 
-    m_pyramidTransform = translate(mat4(1), vec3(3, 2, 0));
+    m_pyramidTransform = translate(mat4(1), vec3(2, 0, -2));
 
-    m_gridTransform = scale(mat4(1), vec3(5));
+    m_gridTransform = translate(mat4(1), vec3(0, -1, 0));
+    m_gridTransform = scale(m_gridTransform, vec3(5));
 
-    m_sphereTransform = translate(mat4(1), vec3(0, 5, 0));
-    m_sphereTransform = scale(m_sphereTransform, vec3(5));
+    m_sphereTransform = translate(mat4(1), vec3(-4, 0, 0));
 
-    m_cylinderTransform = mat4(1);
+    m_cylinderTransform = translate(mat4(1), vec3(-2, 0, 2));
 }
 
 void PrimitiveScene::Update(float _dt)
 {
+    m_quadTransform = rotate(m_quadTransform, _dt, vec3(0, 1, 0));
     m_cubeTransform = rotate(m_cubeTransform, _dt, vec3(1, 1, -1));
+    m_pyramidTransform = rotate(m_pyramidTransform, _dt, vec3(0, 1, 0));
     m_sphereTransform = rotate(m_sphereTransform, _dt, vec3(1, 1, -1));
     m_cylinderTransform = rotate(m_cylinderTransform, _dt, vec3(1, 1, -1));
 }
 
 void PrimitiveScene::Draw()
 {
-    // DrawMesh(m_quadMesh, m_quadTransform, vec4(0.5f, 0, 0.75f, 1));
-    // DrawMesh(m_cubeMesh, m_cubeTransform, vec4(1, 0, 0, 1));
-    // DrawMesh(m_pyramidMesh, m_pyramidTransform, vec4(0, 1, 0, 1));
-    // DrawMesh(m_gridMesh, m_gridTransform, vec4(0, 0, 1, 1));
-    // DrawMesh(m_sphereMesh, m_sphereTransform, vec4(1, 1, 0, 1));
+    DrawMesh(m_quadMesh, m_quadTransform, vec4(0.5f, 0, 0.75f, 1));
+    DrawMesh(m_cubeMesh, m_cubeTransform, vec4(1, 0, 0, 1));
+    DrawMesh(m_pyramidMesh, m_pyramidTransform, vec4(0, 1, 0, 1));
+    DrawMesh(m_gridMesh, m_gridTransform, vec4(0, 0, 1, 1));
+    DrawMesh(m_sphereMesh, m_sphereTransform, vec4(1, 1, 0, 1));
     DrawMesh(m_cylinderMesh, m_cylinderTransform, vec4(1, 0, 1, 1));
 }
 

@@ -43,16 +43,19 @@ protected:
 
     Mesh                m_cubeMesh;
     mat4                m_cubeTransform;
+
+    Mesh                m_cylinderMesh;
+    mat4                m_cylinderTransform;
     
     Mesh                m_pyramidMesh;
     mat4                m_pyramidTransform;
 
-    Mesh                m_gridMesh;
-    mat4                m_gridTransform;
-
     Mesh                m_sphereMesh;
     mat4                m_sphereTransform;
 
-    Mesh                m_cylinderMesh;
-    mat4                m_cylinderTransform;
+    Mesh                m_coneMesh;
+    mat4                m_coneTransform;
+
+    Mesh                m_gridMesh;
+    mat4                m_gridTransform;
 };
