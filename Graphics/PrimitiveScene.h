@@ -30,7 +30,7 @@ protected:
     void MakeCube();
     void MakeCylinder();
     void MakePyramid();
-    void MakeSphere();
+    void MakeSphere(int _rows, int _cols);
     void MakeCone();
     void MakeGrid(int _rows, int _cols, vec2 _extents = vec2(5));
 
@@ -49,4 +49,7 @@ protected:
 
     Mesh                m_gridMesh;
     mat4                m_gridTransform;
+
+    Mesh                m_sphereMesh;
+    mat4                m_sphereTransform;
 };
