@@ -11,6 +11,7 @@ void PrimitiveScene::Start()
     MakeGrid(10, 10);
     MakeSphere(10, 10);
     MakeCylinder(10);
+    MakeCone(10);
 
     // Set transforms
     m_quadTransform = translate(mat4(1), vec3(2, 0, 2));
@@ -25,15 +26,18 @@ void PrimitiveScene::Start()
     m_sphereTransform = translate(mat4(1), vec3(-4, 0, 0));
 
     m_cylinderTransform = translate(mat4(1), vec3(-2, 0, 2));
+
+    m_coneTransform = translate(mat4(1), vec3(4, 0, 0));
 }
 
 void PrimitiveScene::Update(float _dt)
 {
-    m_quadTransform = rotate(m_quadTransform, _dt, vec3(0, 1, 0));
+    m_quadTransform = rotate(m_quadTransform, _dt, vec3(1, 1, -1));
     m_cubeTransform = rotate(m_cubeTransform, _dt, vec3(1, 1, -1));
-    m_pyramidTransform = rotate(m_pyramidTransform, _dt, vec3(0, 1, 0));
+    m_pyramidTransform = rotate(m_pyramidTransform, _dt, vec3(1, 1, -1));
     m_sphereTransform = rotate(m_sphereTransform, _dt, vec3(1, 1, -1));
     m_cylinderTransform = rotate(m_cylinderTransform, _dt, vec3(1, 1, -1));
+    m_coneTransform = rotate(m_coneTransform, _dt, vec3(1, 1, -1));
 }
 
 void PrimitiveScene::Draw()
@@ -44,6 +48,7 @@ void PrimitiveScene::Draw()
     DrawMesh(m_gridMesh, m_gridTransform, vec4(0, 0, 1, 1));
     DrawMesh(m_sphereMesh, m_sphereTransform, vec4(1, 1, 0, 1));
     DrawMesh(m_cylinderMesh, m_cylinderTransform, vec4(1, 0, 1, 1));
+    DrawMesh(m_coneMesh, m_coneTransform, vec4(0, 1, 1, 1));
 }
 
 void PrimitiveScene::ImGuiRefresher()
@@ -147,7 +152,7 @@ void PrimitiveScene::MakeCylinder(int _segments, float _radius, float _height)
 
     unsigned int* indices = new unsigned int[indexCount];
 
-    // Bottom ring of tris
+    // Bottom circle of tris
     for (int i = 0; i < _segments; i++)
     {
         // Initialised upside down, so they are facing outwards
@@ -179,7 +184,7 @@ void PrimitiveScene::MakeCylinder(int _segments, float _radius, float _height)
             indices[index - 5] -= _segments;
     }
 
-    // Top ring of tris
+    // Top circle of tris
     for (int i = 0; i < _segments; i++)
     {
         // Initialised to be faced outwards
@@ -316,6 +321,68 @@ void PrimitiveScene::MakeSphere(int _xSegments, int _ySegments)
     }
 
     m_sphereMesh.Initialise(vertexCount, vertices, indexCount, indices);
+}
+
+void PrimitiveScene::MakeCone(int _segments, float _radius, float _height)
+{
+    // Initialise the verex array
+    int vertexCount = 2 + _segments;
+    Mesh::Vertex* vertices = new Mesh::Vertex[vertexCount];
+
+    int index = 0;
+    
+    // For lower center vert
+    vertices[index++].position = {0, -_height, 0, 1};
+        
+    for (int j = 0; j < _segments; j++)
+    {
+        // Using unit circle, calculate the x and z pos of each vertice
+        float percent = (float)j / (float)_segments;
+        float radians = percent * (2 * glm::pi<float>());
+
+        // X and Z pos of the vert using passed in radius
+        float xPos = -_radius * sinf(radians);
+        float zPos = -_radius * cosf(radians);
+
+        vertices[index++].position = {xPos, -_height, zPos, 1};
+    }
+
+    // For upper center vert
+    vertices[index++].position = {0, _height, 0, 1};
+
+    // Initialise the index array
+    int indexCount = 3 * (2 * _segments);
+    index = 0;
+
+    unsigned int* indices = new unsigned int[indexCount];
+
+    // Bottom circle of tris
+    for (int i = 0; i < _segments; i++)
+    {
+        // Initialised upside down, so they are facing outwards
+        indices[index++] = i + 2;
+        indices[index++] = i + 1;
+        indices[index++] = 0;
+
+        // Cleanup to prevent wrong index for tri point 1
+        if (indices[index - 3] == _segments + 1)
+            indices[index - 3] = indices[index - 2] - (_segments - 1);
+    }
+
+    // Top circle of tris
+    for (int i = 0; i < _segments; i++)
+    {
+        // Initialised to be faced outwards
+        indices[index++] = vertexCount - 1;
+        indices[index++] = vertexCount - 1 - _segments + i;
+        indices[index++] = vertexCount - 1 - _segments + i + 1;
+    
+        // Cleanup to prevent wrong index for tri point 3
+        if (indices[index - 1] == vertexCount - 1)
+            indices[index - 1] = indices[index - 2] - (_segments - 1);
+    }
+
+    m_coneMesh.Initialise(vertexCount, vertices, indexCount, indices);
 }
 
 void PrimitiveScene::MakeGrid(int _xSegments, int _ySegments, vec2 _extents)
