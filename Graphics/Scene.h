@@ -13,8 +13,8 @@ public:
 
     virtual void Destroy() {}
 
-protected:
     virtual void ImGuiRefresher() {}
 
+protected:
     GraphicsApp* m_graphicsApp;
 };
