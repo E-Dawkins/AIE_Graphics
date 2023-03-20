@@ -1,9 +1,11 @@
 ﻿#include "PrimitiveScene.h"
 
+#include <imgui.h>
+
 void PrimitiveScene::Start()
 {
-    LoadShader();
-
+    LoadShader("color", m_colorShader);
+    
     // Make primitives
     MakeQuad();
     MakeCube();
@@ -42,29 +44,35 @@ void PrimitiveScene::Update(float _dt)
 
 void PrimitiveScene::Draw()
 {
-    DrawMesh(m_quadMesh, m_quadTransform, vec4(0.5f, 0, 0.75f, 1));
-    DrawMesh(m_cubeMesh, m_cubeTransform, vec4(1, 0, 0, 1));
-    DrawMesh(m_pyramidMesh, m_pyramidTransform, vec4(0, 1, 0, 1));
-    DrawMesh(m_gridMesh, m_gridTransform, vec4(0, 0, 1, 1));
-    DrawMesh(m_sphereMesh, m_sphereTransform, vec4(1, 1, 0, 1));
-    DrawMesh(m_cylinderMesh, m_cylinderTransform, vec4(1, 0, 1, 1));
-    DrawMesh(m_coneMesh, m_coneTransform, vec4(0, 1, 1, 1));
+    DrawMeshColor(m_quadMesh, m_quadTransform, vec4(0.5f, 0, 0.75f, 1));
+    DrawMeshColor(m_cubeMesh, m_cubeTransform, vec4(1, 0, 0, 1));
+    DrawMeshColor(m_pyramidMesh, m_pyramidTransform, vec4(0, 1, 0, 1));
+    DrawMeshColor(m_gridMesh, m_gridTransform, vec4(0, 0, 1, 1));
+    DrawMeshColor(m_sphereMesh, m_sphereTransform, vec4(1, 1, 0, 1));
+    DrawMeshColor(m_cylinderMesh, m_cylinderTransform, vec4(1, 0, 1, 1));
+    DrawMeshColor(m_coneMesh, m_coneTransform, vec4(0, 1, 1, 1));
 }
 
-void PrimitiveScene::ImGuiRefresher()
+void PrimitiveScene::LoadShader(char* _shaderName, aie::ShaderProgram& _shader)
 {
+    std::string vertPath = "./shaders/";
+    vertPath.append(_shaderName);
     
-}
+    std::string fragPath = vertPath;
 
-void PrimitiveScene::LoadShader()
-{
+    vertPath.append(".vert");
+    fragPath.append(".frag");
+
+    printf(vertPath.c_str());
+    printf(fragPath.c_str());
+    
     // Load the simple vert and frag shaders into the m_simpleShader variable
-    m_colorShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/color.vert");
-    m_colorShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/color.frag");
+    _shader.loadShader(aie::eShaderStage::VERTEX, vertPath.c_str());
+    _shader.loadShader(aie::eShaderStage::FRAGMENT, fragPath.c_str());
 
-    if (!m_colorShader.link())
+    if (!_shader.link())
     {
-        printf("Simple Shader has an Error: %s\n", m_colorShader.getLastError());
+        printf("Simple Shader has an Error: %s\n", _shader.getLastError());
         return;
     }
 }
@@ -428,7 +436,7 @@ void PrimitiveScene::MakeGrid(int _xSegments, int _ySegments, vec2 _extents)
     m_gridMesh.Initialise(vertexCount, vertices, indexCount, indices);
 }
 
-void PrimitiveScene::DrawMesh(Mesh& _mesh, mat4& _transform, vec4 _color)
+void PrimitiveScene::DrawMeshColor(Mesh& _mesh, mat4& _transform, vec4 _color)
 {
     mat4 pvm = m_graphicsApp->pvMatrix * _transform;
     

@@ -23,10 +23,10 @@ bool GraphicsApp::startup() {
 	Gizmos::create(10000, 10000, 10000, 10000);
 
 	// create simple camera transforms
-	viewMatrix = lookAt(vec3(20), vec3(0), vec3(0, 1, 0));
-	projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, 16.0f / 9.0f, 0.1f, 1000.0f);
+	viewMatrix = lookAt(vec3(10), vec3(0), vec3(0, 1, 0));
+	projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, 16.f / 9.f, 0.1f, 1000.f);
 	
-	m_scene = new SolarSystem();
+	m_scene = new PrimitiveScene();
 	m_scene->Start();
 	
 	return true;
@@ -47,6 +47,8 @@ void GraphicsApp::update(float deltaTime) {
 
 	m_scene->Update(deltaTime);
 	m_scene->ImGuiRefresher();
+
+	m_camera.Update(deltaTime);
 	
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
@@ -57,8 +59,8 @@ void GraphicsApp::draw() {
 	// wipe the screen to the background colour
 	clearScreen();
 
-	// update perspective based on screen size
-	projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.0f);
+	viewMatrix = m_camera.GetViewMatrix();
+	projectionMatrix = m_camera.GetProjectionMatrix(getWindowWidth(), (float)getWindowHeight());
 	
 	pvMatrix = projectionMatrix * viewMatrix;
 	

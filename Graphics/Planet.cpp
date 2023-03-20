@@ -30,10 +30,12 @@ Planet::~Planet()
 
 void Planet::Update(float _dt)
 {
-    if (m_rotationRadians != 0.f)
+    if (m_rotationRadians > 0)
     {
         // Rotate the transform around local origin
-        mat4 rotation = RotateAround(vec3(0), normalize(vec3(0, 1, 0)), m_rotationRadians * m_rotationMultiplier);
+        vec4 parentUp = vec4(0, 1, 0, 1) * m_parent->transform;
+        
+        mat4 rotation = RotateAround(vec3(0), normalize(vec3(parentUp)), m_rotationRadians * m_rotationMultiplier);
         transform = rotation * transform;
     }
 
@@ -60,10 +62,10 @@ void Planet::Draw()
     // Transform relative to world origin
     else
     {
-        aie::Gizmos::addSphere(transform[3], averageScale, 10, 10, color);
+        aie::Gizmos::addSphere(vec3(0), averageScale, 10, 10, color, &transform);
 
         if (m_hasRing)
-            aie::Gizmos::addRing(transform[3], 1.25f * averageScale, 1.75f * averageScale, 10, color);
+            aie::Gizmos::addRing(vec3(0), 1.25f * averageScale, 1.75f * averageScale, 10, color, &transform);
     }
 
     for (auto moon : m_moons)
@@ -83,7 +85,7 @@ mat4 Planet::RotateAround(vec3 _point, vec3 _axis, float _radians)
 
     // Return the local transform rotated by the radian
     // amount, then apply that rotation to the world transform
-    return worldT * rotation * localT;
+    return rotation * worldT * localT;
 }
 
 void Planet::HasRing(bool _hasRing)

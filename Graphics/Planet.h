@@ -20,7 +20,13 @@ public:
     void HasRing(bool _hasRing);
     float GetAverageScale(mat4 _transform);
 
-    void SetRotationMultiplier(float _multiplier) { m_rotationMultiplier = _multiplier; }
+    void SetRotationMultiplier(float _multiplier)
+    {
+        for (auto moon : m_moons)
+            moon->SetRotationMultiplier(_multiplier);
+        
+        m_rotationMultiplier = _multiplier;
+    }
 
     void AddMoon(Planet* _moon) { m_moons.push_back(_moon); }
     std::vector<Planet*>& GetMoons() { return m_moons; }
