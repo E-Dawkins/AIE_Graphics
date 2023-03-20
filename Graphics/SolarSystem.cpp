@@ -1,11 +1,15 @@
 ﻿#include "SolarSystem.h"
 
+#include <Gizmos.h>
 #include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 SolarSystem::SolarSystem()
 {
     m_solarSystemSpeed = 1.f;
+    
+    m_camera = new SimpleCamera();
+    m_camera->SetPosition(vec3(0, 0, -20));
 }
 
 void SolarSystem::Start()
@@ -52,6 +56,9 @@ void SolarSystem::Update(float _dt)
         planet->SetRotationMultiplier(m_solarSystemSpeed);
         planet->Update(_dt);
     }
+
+    // Update camera
+    m_camera->Update(_dt);
 }
 
 void SolarSystem::Draw()
@@ -59,6 +66,8 @@ void SolarSystem::Draw()
     // Draw planets
     for (auto planet : m_planets)
         planet->Draw();
+
+    aie::Gizmos::draw(m_camera->GetProjectionMatrix(), m_camera->GetViewMatrix());
 }
 
 void SolarSystem::ImGuiRefresher()
@@ -67,19 +76,6 @@ void SolarSystem::ImGuiRefresher()
 
     ImGui::SliderFloat("Solar System Speed", &m_solarSystemSpeed, 0.01f, 50.f);
     ImGui::DragFloat3("World Position", &m_planets.front()->transform[3][0], 0.05f);
-
-    static vec3 worldRotation = vec3(0);
-    static mat4 worldMatrix = mat4(1);
-
-    float DEG2RAD = glm::pi<float>() / 180.f;
-    
-    worldMatrix = rotate(worldMatrix, worldRotation.x * DEG2RAD, vec3(1, 0, 0));
-    worldMatrix = rotate(worldMatrix, worldRotation.y * DEG2RAD, vec3(0, 1, 0));
-    worldMatrix = rotate(worldMatrix, worldRotation.z * DEG2RAD, vec3(0, 0, 1));
-
-    m_planets.front()->transform = worldMatrix * m_planets.front()->transform;
-    
-    ImGui::DragFloat3("World Rotation", &worldRotation[0], 0.1f, 0, 360);
     
     ImGui::Separator();
     

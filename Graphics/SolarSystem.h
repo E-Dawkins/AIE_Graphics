@@ -1,8 +1,10 @@
 ﻿#pragma once
-#include <vector>
+#include "Scene.h"
 
 #include "Planet.h"
-#include "Scene.h"
+#include "SimpleCamera.h"
+
+#include <vector>
 
 class SolarSystem : public Scene
 {
@@ -20,4 +22,6 @@ protected:
     std::vector<Planet*> m_planets;
 
     float m_solarSystemSpeed;
+
+    SimpleCamera* m_camera;
 };

@@ -85,7 +85,7 @@ mat4 Planet::RotateAround(vec3 _point, vec3 _axis, float _radians)
 
     // Return the local transform rotated by the radian
     // amount, then apply that rotation to the world transform
-    return rotation * worldT * localT;
+    return worldT * rotation * localT;
 }
 
 void Planet::HasRing(bool _hasRing)

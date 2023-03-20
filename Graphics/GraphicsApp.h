@@ -1,16 +1,8 @@
 #pragma once
-
-#include <vector>
-
 #include "Application.h"
-#include <glm/mat4x4.hpp>
 
-#include "Mesh.h"
-#include "Shader.h"
-#include "OBJMesh.h"
-#include "SimpleCamera.h"
+#include <glm/glm.hpp>
 
-using glm::mat4;
 class Scene;
 
 class GraphicsApp : public aie::Application {
@@ -28,14 +20,7 @@ public:
 
 	virtual void update(float deltaTime);
 	virtual void draw();
-
-	// camera transforms
-	mat4			viewMatrix = mat4(1);
-	mat4			projectionMatrix = mat4(1);
-	mat4			pvMatrix = mat4(1);
-
-	SimpleCamera	m_camera;
-
+	
 	struct Light
 	{
 		glm::vec3 direction;

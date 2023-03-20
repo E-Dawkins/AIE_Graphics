@@ -1,5 +1,7 @@
 ﻿#pragma once
+#include "Mesh.h"
 #include "OBJMesh.h"
+#include "OrbitalCamera.h"
 #include "Scene.h"
 #include "Shader.h"
 
@@ -16,13 +18,25 @@ public:
     void ImGuiRefresher() override;
     
     void LoadBunny();
+    void LoadTexture();
+
+    void DrawPhong();
+    void DrawTextured();
 
 protected:
+    aie::Texture        m_gridTexture;
+    
     aie::ShaderProgram	m_phongShader;
+    aie::ShaderProgram  m_texturedShader;
 
     aie::OBJMesh		m_bunnyMesh;
     mat4                m_bunnyTransform;
 
-    GraphicsApp::Light m_light;
-    vec3 m_ambientLight;
+    GraphicsApp::Light  m_light;
+    vec3                m_ambientLight;
+
+    OrbitalCamera*      m_camera;
+
+    Mesh                m_quadMesh;
+    mat4                m_quadTransform;
 };

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <map>
+#include <vector>
 
 #include "Mesh.h"
 #include "Scene.h"
@@ -8,6 +9,8 @@
 #include <glm/mat4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "SimpleCamera.h"
 
 using glm::mat4;
 using glm::vec2;
@@ -58,4 +61,7 @@ protected:
 
     Mesh                m_gridMesh;
     mat4                m_gridTransform;
+
+    int m_cameraIndex;
+    std::vector<SimpleCamera*> m_allCameras;
 };

@@ -1,9 +1,22 @@
 ﻿#include "PrimitiveScene.h"
 
 #include <imgui.h>
+#include <Input.h>
+#include <string>
+
+#include "StationaryCamera.h"
 
 void PrimitiveScene::Start()
 {
+    m_allCameras.push_back(new StationaryCamera(vec3(0, 0, -20), vec3(0, 0, 0)));
+    m_allCameras.push_back(new StationaryCamera(vec3(-20, 0, 0), vec3(0, -glm::pi<float>() * 0.5f, 0)));
+    m_allCameras.push_back(new StationaryCamera(vec3(0, 0, 20), vec3(0, glm::pi<float>(), 0)));
+    m_allCameras.push_back(new StationaryCamera(vec3(20, 0, 0), vec3(0, glm::pi<float>() * 0.5f, 0)));
+    m_allCameras.push_back(new StationaryCamera(vec3(0, -20, 0), vec3(glm::pi<float>() * 0.5f, 0, 0)));
+    m_allCameras.push_back(new StationaryCamera(vec3(0, 20, 0), vec3(-glm::pi<float>() * 0.5f, 0, 0)));
+	
+    m_cameraIndex = 0;
+    
     LoadShader("color", m_colorShader);
     
     // Make primitives
@@ -40,6 +53,16 @@ void PrimitiveScene::Update(float _dt)
     m_sphereTransform = rotate(m_sphereTransform, _dt, vec3(1, 1, -1));
     m_cylinderTransform = rotate(m_cylinderTransform, _dt, vec3(1, 1, -1));
     m_coneTransform = rotate(m_coneTransform, _dt, vec3(1, 1, -1));
+
+    aie::Input* input = aie::Input::getInstance();
+    
+    // Switch cameras
+    if (input->wasKeyPressed(aie::INPUT_KEY_SPACE))
+    {
+        m_cameraIndex = (m_cameraIndex + 1) % m_allCameras.size();
+    }
+
+    m_allCameras[m_cameraIndex]->Update(_dt);
 }
 
 void PrimitiveScene::Draw()
@@ -438,7 +461,7 @@ void PrimitiveScene::MakeGrid(int _xSegments, int _ySegments, vec2 _extents)
 
 void PrimitiveScene::DrawMeshColor(Mesh& _mesh, mat4& _transform, vec4 _color)
 {
-    mat4 pvm = m_graphicsApp->pvMatrix * _transform;
+    mat4 pvm = m_allCameras[m_cameraIndex]->GetProjectionViewMatrix() * _transform;
     
     // Bind the shader
     m_colorShader.bind();

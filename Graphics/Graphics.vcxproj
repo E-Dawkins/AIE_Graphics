@@ -171,6 +171,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
+    <ClCompile Include="OrbitalCamera.cpp" />
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="PrimitiveScene.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="GraphicsApp.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OBJMesh.h" />
+    <ClInclude Include="OrbitalCamera.h" />
     <ClInclude Include="Planet.h" />
     <ClInclude Include="PrimitiveScene.h" />
     <ClInclude Include="RenderTarget.h" />
