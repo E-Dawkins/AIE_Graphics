@@ -1,0 +1,13 @@
+#
+#
+#
+
+newmtl _Robot_MAT
+illum 2
+Ka 0.500000 0.500000 0.500000
+Kd 0.800000 0.800000 0.800000
+Ks 0.800000 0.800000 0.800000
+Ns 20.000000
+map_Kd robot_diffuse.png
+map_Ks robot_specular.png
+bump robot_normal.png

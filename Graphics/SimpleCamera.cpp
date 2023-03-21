@@ -25,18 +25,18 @@ void SimpleCamera::Update(float _dt)
 
     // We will use WASD to move and the Q & E to go up and down
     if (input->isKeyDown(aie::INPUT_KEY_W))
-        m_worldTransform[3] += vec4(forward * _dt, 1);
+        SetPosition(GetPosition() + forward * _dt);
     if (input->isKeyDown(aie::INPUT_KEY_S))
-        m_worldTransform[3] -= vec4(forward * _dt, 1);
+        SetPosition(GetPosition() - forward * _dt);
     if (input->isKeyDown(aie::INPUT_KEY_D))
-        m_worldTransform[3] += vec4(right * _dt, 1);
+        SetPosition(GetPosition() - right * _dt);
     if (input->isKeyDown(aie::INPUT_KEY_A))
-        m_worldTransform[3] -= vec4(right * _dt, 1);
+        SetPosition(GetPosition() + right * _dt);
 
     if (input->isKeyDown(aie::INPUT_KEY_Q))
-        m_worldTransform[3] += vec4(up * _dt, 1);
+        SetPosition(GetPosition() + up * _dt);
     if (input->isKeyDown(aie::INPUT_KEY_E))
-        m_worldTransform[3] -= vec4(up * _dt, 1);
+        SetPosition(GetPosition() - up * _dt);
 
     // Get the mouse coordinates
     float mx = input->getMouseX();

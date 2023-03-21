@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Scenes">
       <UniqueIdentifier>{9c7a9b65-d3b6-41fb-8631-ab0f4b720f30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Cameras">
+      <UniqueIdentifier>{33b033e7-5844-483d-895a-9d95b26d0695}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Cameras">
+      <UniqueIdentifier>{0d4e0afe-e23e-4351-9d4a-b24ca42aab9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -57,14 +63,20 @@
     <ClCompile Include="SolarSystem.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StationaryCamera.cpp">
+    <ClCompile Include="Instance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OrbitalCamera.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleCamera.cpp">
+      <Filter>Source Files\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="StationaryCamera.cpp">
+      <Filter>Source Files\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,14 +113,17 @@
     <ClInclude Include="SolarSystem.h">
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleCamera.h">
+    <ClInclude Include="Instance.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleCamera.h">
+      <Filter>Header Files\Cameras</Filter>
     </ClInclude>
     <ClInclude Include="StationaryCamera.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Cameras</Filter>
     </ClInclude>
     <ClInclude Include="OrbitalCamera.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Cameras</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,7 +3,11 @@
 
 #include <glm/glm.hpp>
 
+#include "OBJMesh.h"
+#include "Shader.h"
+
 class Scene;
+class SimpleCamera;
 
 class GraphicsApp : public aie::Application {
 public:
@@ -20,13 +24,17 @@ public:
 
 	virtual void update(float deltaTime);
 	virtual void draw();
-	
-	struct Light
-	{
-		glm::vec3 direction;
-		glm::vec3 color;
-	};
+
+	void LoadObj(char* _filePath, aie::OBJMesh& _mesh);
+	void LoadShader(char *_fileName, aie::ShaderProgram& _shader);
 
 protected:
-	Scene* m_scene = nullptr;
+	SimpleCamera* m_camera;
+	glm::vec3 m_ambientLight;
+	
+	Scene* m_scene;
+
+	aie::OBJMesh m_robotMesh;
+	glm::mat4 m_robotTransform;
+	aie::ShaderProgram m_robotShader;
 };

@@ -17,12 +17,12 @@ using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 
-class PrimitiveScene : public Scene
+class PrimitiveScene
 {
 public:
-    void Start() override;
-    void Update(float _dt) override;
-    void Draw() override;
+    void Start();
+    void Update(float _dt);
+    void Draw();
 
 protected:
     

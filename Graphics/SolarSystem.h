@@ -6,15 +6,15 @@
 
 #include <vector>
 
-class SolarSystem : public Scene
+class SolarSystem
 {
 public:
     SolarSystem();
     
-    void Start() override;
-    void Update(float _dt) override;
-    void Draw() override;
-    void ImGuiRefresher() override;
+    void Start();
+    void Update(float _dt);
+    void Draw();
+    void ImGuiRefresher();
 
 protected:
     vec4 GetMatrixPosition(mat4 _matrix) { return _matrix[3]; }

@@ -6,16 +6,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "GraphicsApp.h"
+#include "StationaryCamera.h"
 
 void BunnyScene::Start()
 {
-    m_light.color = {1, 1, 0};
-    m_ambientLight = {0.5, 0.5, 0.5};
-
-    LoadBunny();
-    LoadTexture();
-
-    m_camera = new OrbitalCamera(m_bunnyTransform, vec3(0, 3.5f, -20.f));
+    m_light.color = {1, 1, 1};
+    m_ambientLight = {1, 1, 1};
+    
+    LoadShader("normalLit", m_robotShaderNormalLit);
+    LoadOBJMesh("./robot/robot.obj", m_robotMesh);
+    m_robotTransform = rotate(mat4(1), glm::pi<float>(), vec3(0, 1, 0));
+    m_robotTransform = scale(m_robotTransform, vec3(0.1f));
+    
+    m_camera = new SimpleCamera();
+    m_camera->SetPosition(vec3(0, 0.75f, -3));
 }
 
 void BunnyScene::Update(float _dt)
@@ -23,108 +27,116 @@ void BunnyScene::Update(float _dt)
     // Rotate the light to emulate a 'day/night' cycle
     m_light.direction = normalize(vec3(cos(ImGui::GetTime() * 2.f), sin(ImGui::GetTime() * 2.f), 0));
 
-    ImGuiRefresher();
-
     // Update camera
     m_camera->Update(_dt);
 }
 
 void BunnyScene::Draw()
 {
-    DrawPhong();
-    DrawTextured();
+    DrawNormalLit(m_robotMesh, m_robotTransform, m_robotShaderNormalLit);
 }
 
 void BunnyScene::ImGuiRefresher()
 {
     ImGui::Begin("LightSettings");
 	
-    ImGui::ColorEdit3("Global Light Color", &m_light.color[0]);
+    ImGui::ColorEdit4("Global Light Color", &m_light.color[0], false);
+    ImGui::ColorEdit4("Ambient Light Color", &m_ambientLight[0], false);
 	
     ImGui::End();
 }
 
-void BunnyScene::LoadBunny()
+void BunnyScene::DrawPhong(aie::OBJMesh& _mesh, mat4& _transform, aie::ShaderProgram& _phongShader)
 {
-    m_phongShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/phong.vert");
-    m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/phong.frag");
-
-    // Check if the color shader has loaded successfully
-    if (!m_phongShader.link())
-    {
-        printf("Phong Shader Error: %s\n", m_phongShader.getLastError());
-        return;
-    }
-
-    // Check if bunny mesh has loaded successfully
-    if (!m_bunnyMesh.load("./stanford/Bunny.obj"))
-    {
-        printf("Bunny Mesh Error:\n");
-        return;
-    }
-
-    m_bunnyTransform = mat4(1);
-}
-
-void BunnyScene::LoadTexture()
-{
-    m_texturedShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/textured.vert");
-    m_texturedShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/textured.frag");
-
-    // Check if the color shader has loaded successfully
-    if (!m_texturedShader.link())
-    {
-        printf("Textured Shader Error: %s\n", m_texturedShader.getLastError());
-        return;
-    }
-
-    if (!m_gridTexture.load("./textures/numbered_grid.tga"))
-    {
-        printf("Failed the load the grid texture correctly!\n");
-        return;
-    }
-
-    m_quadMesh.InitialiseQuad();
-    m_quadTransform = scale(mat4(1), vec3(10));
-}
-
-void BunnyScene::DrawPhong()
-{
+    mat4 pvm = m_camera->GetProjectionViewMatrix() * _transform;
+    
     // Bind the phong shader
-    m_phongShader.bind();
-
-    // Bind the camera position
-    m_phongShader.bindUniform("CameraPosition", m_camera->GetPosition());
-
-    mat4 pvm = m_camera->GetProjectionViewMatrix() * m_bunnyTransform;
+    _phongShader.bind();
     
     // Bind shader uniforms
-    m_phongShader.bindUniform("LightDirection", m_light.direction);
-    m_phongShader.bindUniform("LightColor", m_light.color);
-    m_phongShader.bindUniform("AmbientColor", m_ambientLight);
-    m_phongShader.bindUniform("ProjectionViewModel", pvm);
-    m_phongShader.bindUniform("ModelMatrix", m_bunnyTransform);
+    _phongShader.bindUniform("CameraPosition", m_camera->GetPosition());
+    _phongShader.bindUniform("LightDirection", m_light.direction);
+    _phongShader.bindUniform("LightColor", m_light.color);
+    _phongShader.bindUniform("AmbientColor", m_ambientLight);
+    _phongShader.bindUniform("ProjectionViewModel", pvm);
+    _phongShader.bindUniform("ModelMatrix", _transform);
 
-    // aie::Gizmos::addAABBFilled(vec3(0), vec3(10, 0.01f, 10), vec4(1, 0, 0, 1));
-    // aie::Gizmos::draw(m_camera->GetProjectionViewMatrix());
-
-    // Draw using the mesh's draw
-    m_bunnyMesh.draw();
+    // Draw mesh
+    _mesh.draw();
 }
 
-void BunnyScene::DrawTextured()
+void BunnyScene::DrawTexture(aie::OBJMesh& _mesh, mat4& _transform, aie::ShaderProgram& _textureShader)
 {
-    mat4 pvm = m_camera->GetProjectionViewMatrix() * m_quadTransform;
+    mat4 pvm = m_camera->GetProjectionViewMatrix() * _transform;
     
     // Bind the textured shader
-    m_texturedShader.bind();
+    _textureShader.bind();
 
     // Bind uniforms
-    m_texturedShader.bindUniform("ProjectionViewModel", pvm);
-    m_texturedShader.bindUniform("diffuseTexture", 0);
+    _textureShader.bindUniform("ProjectionViewModel", pvm);
+    _textureShader.bindUniform("diffuseTexture", 0);
 
-    // Bind the texture to a specific location
-    m_gridTexture.bind(0);
+    // Draw mesh
+    _mesh.draw();
+}
 
-    m_quadMesh.Draw();
+void BunnyScene::DrawNormalLit(aie::OBJMesh& _mesh, mat4& _transform, aie::ShaderProgram& _normalLitShader)
+{
+    mat4 pvm = m_camera->GetProjectionViewMatrix() * _transform;
+
+    // Bind the normal lit shader
+    _normalLitShader.bind();
+    
+    // Bind uniforms
+    _normalLitShader.bindUniform("CameraPosition", m_camera->GetPosition());
+    _normalLitShader.bindUniform("diffuseTexture", 0);
+    _normalLitShader.bindUniform("specularTexture", 1);
+    _normalLitShader.bindUniform("LightDirection", m_light.direction);
+    _normalLitShader.bindUniform("LightColor", m_light.color);
+    _normalLitShader.bindUniform("AmbientColor", m_ambientLight);
+    _normalLitShader.bindUniform("ProjectionViewModel", pvm);
+    _normalLitShader.bindUniform("ModelMatrix", _transform);
+
+    // Draw mesh
+    _mesh.draw();
+}
+
+void BunnyScene::LoadOBJMesh(char* _filePath, aie::OBJMesh& _mesh)
+{
+    // Check if bunny mesh has loaded successfully
+    if (!_mesh.load(_filePath, true, true))
+    {
+        printf("Mesh Error! Could not load:\n\t%s", _filePath);
+        return;
+    }
+}
+
+void BunnyScene::LoadShader(char* _shaderName, aie::ShaderProgram& _shader)
+{
+    std::string vertPath = "./shaders/";
+    vertPath.append(_shaderName);
+    
+    std::string fragPath = vertPath;
+
+    vertPath.append(".vert");
+    fragPath.append(".frag");
+    
+    // Load the simple vert and frag shaders into the m_simpleShader variable
+    _shader.loadShader(aie::eShaderStage::VERTEX, vertPath.c_str());
+    _shader.loadShader(aie::eShaderStage::FRAGMENT, fragPath.c_str());
+
+    if (!_shader.link())
+    {
+        printf("Shader Error!\n\t%s", _shader.getLastError());
+        return;
+    }
+}
+
+void BunnyScene::LoadTexture(char* _filePath, aie::Texture& _texture)
+{
+    if (!_texture.load(_filePath))
+    {
+        printf("Texture Error! Could not load:\n\t%s", _filePath);
+        return;
+    }
 }

@@ -11,9 +11,10 @@ OrbitalCamera::OrbitalCamera(mat4& _target, vec3 _targetOffset, float _orbitalSp
     if (_targetOffset.y != 0)
     {
         float dist = distance(m_target[3], m_target[3] + vec4(m_targetOffset, 1));
+        
 
         // Rotate the camera on the x-axis, to look down / up at the target
-        float angle = sinf(dist / _targetOffset.y);
+        float angle = sinf(_targetOffset.y / dist);
         m_worldTransform = rotate(m_worldTransform, angle, GetRight(m_worldTransform));
     }
 }
