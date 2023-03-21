@@ -22,7 +22,7 @@ bool GraphicsApp::startup()
 	m_camera->SetPosition(vec3(0, 0.75f, -3));
 	
 	Light light = Light(vec3(1, 1, 1), vec3(1), 1.f);
-	// m_ambientLight = {1, 1, 1};
+	m_ambientLight = vec3(0.5f);
 	
 	m_scene = new Scene(m_camera, vec2(getWindowWidth(), getWindowHeight()),
 		light, m_ambientLight);
@@ -60,6 +60,7 @@ void GraphicsApp::draw()
 	// wipe the screen to the background colour
 	clearScreen();
 
+	m_scene->GetLight().direction = vec3(glm::cos(getTime()), glm::sin(getTime()), 0);
 	m_scene->Draw();
 }
 
