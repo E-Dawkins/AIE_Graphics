@@ -5,9 +5,9 @@
 
 #include "OBJMesh.h"
 #include "Shader.h"
-
-class Scene;
-class SimpleCamera;
+#include "SimpleCamera.h"
+#include "Scene.h"
+#include "Instance.h"
 
 class GraphicsApp : public aie::Application {
 public:
@@ -25,16 +25,21 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
-	void LoadObj(char* _filePath, aie::OBJMesh& _mesh);
-	void LoadShader(char *_fileName, aie::ShaderProgram& _shader);
+	void ImGuiRefresher();
+
+	bool LaunchScenes();
+	bool LoadRobotScene(int _sceneIndex);
+	
+	bool LoadObj(const char* _filePath, aie::OBJMesh& _mesh, bool _flipTexture);
+	bool LoadShader(const char *_fileName, aie::ShaderProgram& _shader);
 
 protected:
-	SimpleCamera* m_camera;
-	glm::vec3 m_ambientLight;
-	
-	Scene* m_scene;
+	SimpleCamera m_camera;
+
+	int m_sceneIndex = 0;
+	std::vector<Scene*> m_scenes;
 
 	aie::OBJMesh m_robotMesh;
-	glm::mat4 m_robotTransform;
+	mat4 m_robotTransform;
 	aie::ShaderProgram m_robotShader;
 };
