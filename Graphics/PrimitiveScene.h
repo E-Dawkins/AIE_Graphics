@@ -27,14 +27,6 @@ public:
 protected:
     
     void LoadShader(char* _shaderName, aie::ShaderProgram& _shader);
-    
-    void MakeQuad();
-    void MakeCube();
-    void MakeCylinder(int _segments, float _radius = 0.5f, float _height = 0.5f);
-    void MakePyramid();
-    void MakeSphere(int _xSegments, int _ySegments);
-    void MakeCone(int _segments, float _radius = 0.5f, float _height = 0.5f);
-    void MakeGrid(int _xSegments, int _ySegments, vec2 _extents = vec2(5));
 
     void DrawMeshColor(Mesh& _mesh, mat4& _transform, vec4 _color);
 

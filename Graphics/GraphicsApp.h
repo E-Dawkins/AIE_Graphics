@@ -9,6 +9,9 @@
 #include "Scene.h"
 #include "Instance.h"
 
+// Primitives
+class Quad;
+
 class GraphicsApp : public aie::Application {
 public:
 	GraphicsApp() = default;
@@ -28,7 +31,8 @@ public:
 	void ImGuiRefresher();
 
 	bool LaunchScenes();
-	bool LoadRobotScene(int _sceneIndex);
+	bool LoadRobotScene();
+	bool LoadPrimitiveScene();
 	
 	bool LoadObj(const char* _filePath, aie::OBJMesh& _mesh, bool _flipTexture);
 	bool LoadShader(const char *_fileName, aie::ShaderProgram& _shader);
@@ -40,6 +44,5 @@ protected:
 	std::vector<Scene*> m_scenes;
 
 	aie::OBJMesh m_robotMesh;
-	mat4 m_robotTransform;
 	aie::ShaderProgram m_robotShader;
 };

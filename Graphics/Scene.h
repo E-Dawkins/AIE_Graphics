@@ -29,7 +29,7 @@ struct Light
 class Scene
 {
 public:
-    Scene(SimpleCamera& _camera, glm::vec2 _windowSize,
+    Scene(char* _sceneName, SimpleCamera& _camera, glm::vec2 _windowSize,
         Light& _light, glm::vec3 _ambientLightColor);
     ~Scene();
     
@@ -44,6 +44,7 @@ public:
         m_pointLights.push_back(Light(_direction, _color, _intensity));
     }
 
+    char* GetSceneName()                    { return m_sceneName; }
     SimpleCamera* GetCamera()               { return m_camera; }
     glm::vec2 GetWindowSize()               { return m_windowSize; }
     glm::vec3& GetAmbientLightColor()       { return m_ambientLightColor; }
@@ -54,6 +55,8 @@ public:
     glm::vec3* GetPointLightColors()        { return &m_pointLightColors[0]; }
     
 protected:
+    char*                   m_sceneName;
+    
     SimpleCamera*           m_camera;
     glm::vec2               m_windowSize;
 

@@ -20,6 +20,6 @@ void main()
     vTexCoord = TexCoord;
     vTangent = (ModelMatrix * Tangent).xyz;
     vBiTangent = cross(vNormal, vTangent) * Tangent.w;
-
+    
     gl_Position = ProjectionViewModel * Position;
 }

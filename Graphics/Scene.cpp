@@ -3,8 +3,9 @@
 #include "Instance.h"
 #include "SimpleCamera.h"
 
-Scene::Scene(SimpleCamera& _camera, vec2 _windowSize, Light& _light, vec3 _ambientLightColor)
+Scene::Scene(char* _sceneName, SimpleCamera& _camera, vec2 _windowSize, Light& _light, vec3 _ambientLightColor)
 {
+    m_sceneName = _sceneName;
     m_camera = &_camera;
     m_windowSize = _windowSize;
     m_light = _light;

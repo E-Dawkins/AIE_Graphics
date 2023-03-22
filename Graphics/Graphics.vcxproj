@@ -166,7 +166,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BunnyScene.cpp" />
     <ClCompile Include="GraphicsApp.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="main.cpp" />
@@ -174,7 +173,6 @@
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="OrbitalCamera.cpp" />
     <ClCompile Include="Planet.cpp" />
-    <ClCompile Include="PrimitiveScene.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -183,19 +181,24 @@
     <ClCompile Include="StationaryCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BunnyScene.h" />
+    <ClInclude Include="Cone.h" />
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="Cylinder.h" />
     <ClInclude Include="GraphicsApp.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="OrbitalCamera.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Planet.h" />
-    <ClInclude Include="PrimitiveScene.h" />
+    <ClInclude Include="Pyramid.h" />
+    <ClInclude Include="Quad.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleCamera.h" />
     <ClInclude Include="SolarSystem.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="StationaryCamera.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
