@@ -12,7 +12,7 @@ SimpleCamera::SimpleCamera()
     m_lastMousePos = vec2(0);
     m_aspectRatio = 16.f / 9.f;
 
-    m_turnSpeed = glm::radians(150.f);
+    m_sensitivity = glm::radians(15.f);
 }
 
 void SimpleCamera::Update(float _dt)
@@ -38,9 +38,9 @@ void SimpleCamera::Update(float _dt)
     if (input->isKeyDown(aie::INPUT_KEY_A))
         SetPosition(GetPosition() + right * moveSpeed * _dt);
 
-    if (input->isKeyDown(aie::INPUT_KEY_Q))
-        SetPosition(GetPosition() + up * moveSpeed * _dt);
     if (input->isKeyDown(aie::INPUT_KEY_E))
+        SetPosition(GetPosition() + up * moveSpeed * _dt);
+    if (input->isKeyDown(aie::INPUT_KEY_Q))
         SetPosition(GetPosition() - up * moveSpeed * _dt);
     
     // Get the mouse coordinates
@@ -50,8 +50,8 @@ void SimpleCamera::Update(float _dt)
     // If RMB held down, increment theta and phi (rotate)
     if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_RIGHT))
     {
-        m_worldTransform = rotate(m_worldTransform, m_turnSpeed * (mx - m_lastMousePos.x) * _dt, GetUp(m_worldTransform));
-        m_worldTransform = rotate(m_worldTransform, m_turnSpeed * (my - m_lastMousePos.y) * _dt, GetRight(m_worldTransform));
+        m_worldTransform = rotate(m_worldTransform, m_sensitivity * (mx - m_lastMousePos.x) * _dt, GetUp(m_worldTransform));
+        m_worldTransform = rotate(m_worldTransform, m_sensitivity * (my - m_lastMousePos.y) * _dt, GetRight(m_worldTransform));
     }
 
     m_lastMousePos = vec2(mx, my);
@@ -71,14 +71,6 @@ vec3 SimpleCamera::GetScale()
     return { xScale, yScale, zScale };
 }
 
-vec3 SimpleCamera::GetForward(mat4 _transform)
-{
-    mat4 inverted = inverse(_transform);
-    vec3 forward = normalize(vec3(inverted[2]));
-
-    return forward;
-}
-
 vec3 SimpleCamera::GetRight(mat4 _transform)
 {
     mat4 inverted = inverse(_transform);
@@ -93,6 +85,14 @@ vec3 SimpleCamera::GetUp(mat4 _transform)
     vec3 up = normalize(vec3(inverted[1]));
 
     return up;
+}
+
+vec3 SimpleCamera::GetForward(mat4 _transform)
+{
+    mat4 inverted = inverse(_transform);
+    vec3 forward = normalize(vec3(inverted[2]));
+
+    return forward;
 }
 
 mat4 SimpleCamera::GetProjectionMatrix()
@@ -128,6 +128,11 @@ float SimpleCamera::GetAspectRatio()
     return m_aspectRatio;
 }
 
+float SimpleCamera::GetSensitivity()
+{
+    return m_sensitivity;
+}
+
 void SimpleCamera::SetPosition(vec3 _position)
 {
     m_worldTransform[3] = vec4(_position, 1);
@@ -151,4 +156,9 @@ void SimpleCamera::SetProjectionMatrix(float _fieldOfView, float _aspectRatio, f
 void SimpleCamera::SetProjectionMatrix(float _fieldOfView, float _width, float _height, float _near, float _far)
 {
     
+}
+
+void SimpleCamera::SetSensitivity(float _sensitivity)
+{
+    m_sensitivity = _sensitivity;
 }

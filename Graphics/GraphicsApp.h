@@ -8,9 +8,13 @@
 #include "SimpleCamera.h"
 #include "Scene.h"
 #include "Instance.h"
+#include "RenderTarget.h"
 
-// Primitives
-class Quad;
+struct ObjModel
+{
+	aie::OBJMesh mesh;
+	aie::ShaderProgram shader;
+};
 
 class GraphicsApp : public aie::Application {
 public:
@@ -28,21 +32,32 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
-	void ImGuiRefresher();
-
 	bool LaunchScenes();
-	bool LoadRobotScene();
+	bool LoadTrooperScene();
 	bool LoadPrimitiveScene();
+	
+	void ImGuiRefresher();
+	void ImGuiTroopers();
+	void ImGuiPrimitive();
 	
 	bool LoadObj(const char* _filePath, aie::OBJMesh& _mesh, bool _flipTexture);
 	bool LoadShader(const char *_fileName, aie::ShaderProgram& _shader);
 
+	bool LoadQuad();
+	void DrawQuad();
+
 protected:
 	SimpleCamera m_camera;
+
+	aie::RenderTarget m_renderTarget;
 
 	int m_sceneIndex = 0;
 	std::vector<Scene*> m_scenes;
 
-	aie::OBJMesh m_robotMesh;
-	aie::ShaderProgram m_robotShader;
+	std::vector<ObjModel> m_models;
+
+	// Post-Processing
+	aie::ShaderProgram m_quadShader;
+	Mesh m_quadMesh;
+	mat4 m_quadTransform;
 };

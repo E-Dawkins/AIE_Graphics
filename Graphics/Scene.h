@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <functional>
 #include <glm/glm.hpp>
 #include <vector>
 #include <list>
@@ -20,10 +21,12 @@ struct Light
     {
         direction = _direction;
         color = _color * _intensity;
+        intensity = _intensity;
     }
 
     glm::vec3 direction;
     glm::vec3 color;
+    float intensity;
 };
 
 class Scene
@@ -43,6 +46,9 @@ public:
     {
         m_pointLights.push_back(Light(_direction, _color, _intensity));
     }
+    void ImGuiRefresher() { m_delegate(); }
+
+    void SetImGuiFunction(std::function<void()> _delegate) { m_delegate = _delegate; }
 
     char* GetSceneName()                    { return m_sceneName; }
     SimpleCamera* GetCamera()               { return m_camera; }
@@ -69,4 +75,6 @@ protected:
 
     glm::vec3 m_pointLightPositions[MAX_LIGHTS];
     glm::vec3 m_pointLightColors[MAX_LIGHTS];
+
+    std::function<void()> m_delegate;
 };

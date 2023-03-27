@@ -17,14 +17,15 @@ public:
     // Getters
     vec3 GetPosition();
     vec3 GetScale();
-    vec3 GetForward(mat4 _transform);
     vec3 GetRight(mat4 _transform);
     vec3 GetUp(mat4 _transform);
+    vec3 GetForward(mat4 _transform);
     mat4 GetWorldTransform(vec3 _position, vec3 _eulerAngles, vec3 _scale);
     mat4 GetProjectionViewMatrix();
     mat4 GetProjectionMatrix();
     mat4 GetViewMatrix();
     float GetAspectRatio();
+    float GetSensitivity();
 
     // Setters
     void SetPosition(vec3 _position);
@@ -32,6 +33,7 @@ public:
     void SetViewMatrix(vec3 _from, vec3 _to, vec3 _up);
     void SetProjectionMatrix(float _fieldOfView, float _aspectRatio, float _near, float _far);
     void SetProjectionMatrix(float _fieldOfView, float _width, float _height, float _near, float _far);
+    void SetSensitivity(float _sensitivity);
     
 protected:
     mat4 m_projectionViewTransform;
@@ -41,7 +43,7 @@ protected:
     vec2 m_lastMousePos;
     
     float m_aspectRatio;
+    float m_sensitivity;
 
-    float m_turnSpeed;
 };
 
