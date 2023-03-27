@@ -3,14 +3,14 @@
 #include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "Gizmos.h"
+#include "Input.h"
+
 #include "Cone.h"
 #include "Cube.h"
 #include "Cylinder.h"
-#include "Gizmos.h"
-#include "Input.h"
 #include "Plane.h"
 #include "Pyramid.h"
-
 #include "Quad.h"
 #include "Sphere.h"
 
@@ -61,25 +61,27 @@ void GraphicsApp::draw()
 	
 	// wipe the screen to the background colour
 	clearScreen();
+	GetActiveScene()->Draw();
 
-	m_scenes[m_sceneIndex]->Draw();
-
-	// // Unbind the target to return to the backbuffer
+	// Unbind the target to return to the backbuffer, then re-clear the screen
 	m_renderTarget.unbind();
 	clearScreen();
-
-	DrawQuad();
+	
+	PostProcessDraw();
 }
 
 bool GraphicsApp::LaunchScenes()
 {
+	m_camera = SimpleCamera();
+	m_camera.SetPosition(vec3(0, 1, -3));
+	
 	if (!m_renderTarget.initialise(1, getWindowWidth(), getWindowHeight()))
 		return false;
 
-	if (!LoadQuad())
+	if (!LoadPostProcessing())
 		return false;
 	
-	if (!LoadTrooperScene())
+	if (!LoadModelScene())
 		return false;
 	
 	if (!LoadPrimitiveScene())
@@ -88,44 +90,40 @@ bool GraphicsApp::LaunchScenes()
 	return true;
 }
 
-bool GraphicsApp::LoadTrooperScene()
+bool GraphicsApp::LoadModelScene()
 {
-	// Create new scene with a simple fly camera,
-	// and global light / ambient light
-	m_camera = SimpleCamera();
-	m_camera.SetPosition(vec3(0, 0.75f, -3));
-	
+	// Create new scene with global / ambient light
 	Light light = Light(vec3(1, -1, 1), vec3(1), 1.f);
 	vec3 ambientLight = vec3(0.5f);
 	
 	m_scenes.push_back(new Scene("Models", m_camera, vec2(getWindowWidth(),
 		getWindowHeight()), light, ambientLight));
 
-	m_scenes.back()->SetImGuiFunction([this] { ImGuiTroopers(); });
+	m_scenes.back()->SetImGuiFunction([this] { ImGuiModels(); });
 
 	// Add point lights, at position with color and intensity
 	m_scenes.back()->AddPointLights(vec3(5, 3, 0), vec3(1, 0, 0), 50);
 	m_scenes.back()->AddPointLights(vec3(-5, 3, 0), vec3(0, 0, 1), 50);
 
-	m_models.push_back(ObjModel());
+	// Load models
+	ObjModel* trooper = LoadObjModel("normalLit", "./stormtrooper/stormtrooper.obj", true);
+	ObjModel* spear = LoadObjModel("normalLit", "./soulspear/soulspear.obj", true);
+	ObjModel* dragon = LoadObjModel("phong", "./stanford/dragon.obj", true);
 	
-	// If shader or object does not load, scene loading returns false
-	if (!LoadShader("normalLit", m_models[0].shader) || !LoadObj("./stormtrooper/stormtrooper.obj", m_models[0].mesh, true))
-		return false;
-
-	m_scenes.back()->AddInstance(new Instance(vec3(2, 0.5f, 0),
-			vec3(0, 180.f, 0), vec3(0.25f), m_models[0].mesh, m_models[0].shader));
+	// Add models to scene
+	m_scenes.back()->AddInstance(new Instance(vec3(0), vec3(0, 180.f, 0),
+		vec3(0.5f), trooper->mesh, trooper->shader));
+	m_scenes.back()->AddInstance(new Instance(vec3(2, 0.25f, 0), vec3(0), vec3(0.15f),
+		spear->mesh, spear->shader));
+	m_scenes.back()->AddInstance(new Instance(vec3(-2, 0.6f, 0), vec3(0), vec3(0.05f),
+		dragon->mesh, dragon->shader));
 
 	return true;
 }
 
 bool GraphicsApp::LoadPrimitiveScene()
 {
-	// Create new scene with a simple fly camera,
-	// and global light / ambient light
-	m_camera = SimpleCamera();
-	m_camera.SetPosition(vec3(2, 1, -2));
-
+	// Create new scene with global / ambient light
 	Light light = Light(vec3(1, -1, 1), vec3(1), 1.f);
 	vec3 ambientLight = vec3(0.5f);
 	
@@ -188,23 +186,29 @@ void GraphicsApp::ImGuiRefresher()
 	
 	ImGui::End();
 
-	m_scenes[m_sceneIndex]->ImGuiRefresher();
+	ImGui::Begin("Post Processing");
+
+	ImGui::InputInt("Post Process Effect", &m_postProcessEffect, 1);
+	
+	ImGui::End();
+
+	GetActiveScene()->ImGuiRefresher();
 }
 
-void GraphicsApp::ImGuiTroopers()
+void GraphicsApp::ImGuiModels()
 {
 	ImGui::Begin("Light Settings");
 
-	ImGui::ColorEdit4("Global Light Color", &m_scenes[m_sceneIndex]->GetLight().color[0], false);
-	ImGui::ColorEdit4("Ambient Light Color", &m_scenes[m_sceneIndex]->GetAmbientLightColor()[0], false);
+	ImGui::ColorEdit4("Global Light Color", &GetActiveScene()->GetLight().color[0], false);
+	ImGui::ColorEdit4("Ambient Light Color", &GetActiveScene()->GetAmbientLightColor()[0], false);
 
-	std::vector<Light>& pointLights = m_scenes[m_sceneIndex]->GetPointLights();
+	std::vector<Light>& pointLights = GetActiveScene()->GetPointLights();
 	
 	for (int i = 0; i < pointLights.size(); i++)
 	{
 		std::string iString = std::to_string(i);
 
-		if (ImGui::CollapsingHeader(("Point Light : " + iString).c_str()))
+		if (ImGui::CollapsingHeader(("Point Light " + iString).c_str()))
 		{
 			Light& light = pointLights[i];
 
@@ -261,36 +265,33 @@ bool GraphicsApp::LoadShader(const char* _fileName, aie::ShaderProgram& _shader)
 	return true;
 }
 
-bool GraphicsApp::LoadQuad()
+bool GraphicsApp::LoadPostProcessing()
 {
 	// Load the simple vert and frag shaders into the m_simpleShader variable
-	m_quadShader.loadShader(aie::eShaderStage::VERTEX, "./shaders/textured.vert");
-	m_quadShader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/textured.frag");
-
-	if (!m_quadShader.link())
-	{
-		printf("Quad Shader has an Error: %s\n", m_quadShader.getLastError());
+	if (!LoadShader("post", m_postProcessShader))
 		return false;
-	}
 
-	m_quadMesh.InitialiseQuad();
-
-	m_quadTransform = scale(mat4(1), vec3(10));
+	m_postProcessQuad.InitialiseFullscreenQuad();
 	
 	return true;
 }
 
-void GraphicsApp::DrawQuad()
+void GraphicsApp::PostProcessDraw()
 {
-	mat4 pvm = m_camera.GetProjectionViewMatrix() * m_quadTransform;
+	// Bind the post process shader and the texture
+	m_postProcessShader.bind();
 	
-	m_quadShader.bind();
-
-	m_quadShader.bindUniform("ProjectionViewModel", pvm);
-
-	m_quadShader.bindUniform("diffuseTexture", 0);
-
+	m_postProcessShader.bindUniform("colorTarget", 0);
+	m_postProcessShader.bindUniform("postProcessTarget", m_postProcessEffect);
 	m_renderTarget.getTarget(0).bind(0);
 
-	m_quadMesh.Draw();
+	m_postProcessQuad.Draw();
+}
+
+ObjModel* GraphicsApp::LoadObjModel(char* _shaderName, char* _objFilePath, bool _flipTextures)
+{
+	ObjModel* model = new ObjModel();
+	LoadShader(_shaderName, model->shader);
+	LoadObj(_objFilePath, model->mesh, _flipTextures);
+	return model;
 }

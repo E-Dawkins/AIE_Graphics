@@ -15,6 +15,7 @@ struct Light
     {
         direction = glm::vec3(0);
         color = glm::vec3(1);
+        intensity = 1;
     }
     
     Light(glm::vec3 _direction, glm::vec3 _color, float _intensity)

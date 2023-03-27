@@ -45,8 +45,6 @@ vec3 Specular(vec3 direction, vec3 color, vec3 normal, vec3 view)
 
 void main()
 {
-    
-    
     // Set the normal and light direction
     vec3 N = normalize(vNormal);
     vec3 T = normalize(vTangent);

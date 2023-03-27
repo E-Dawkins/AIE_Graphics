@@ -33,19 +33,23 @@ public:
 	virtual void draw();
 
 	bool LaunchScenes();
-	bool LoadTrooperScene();
+	bool LoadModelScene();
 	bool LoadPrimitiveScene();
+
+	Scene* GetActiveScene() { return m_scenes[m_sceneIndex]; }
 	
 	void ImGuiRefresher();
-	void ImGuiTroopers();
+	void ImGuiModels();
 	void ImGuiPrimitive();
 	
-	bool LoadObj(const char* _filePath, aie::OBJMesh& _mesh, bool _flipTexture);
-	bool LoadShader(const char *_fileName, aie::ShaderProgram& _shader);
+	static bool LoadObj(const char* _filePath, aie::OBJMesh& _mesh, bool _flipTexture);
+	static bool LoadShader(const char *_fileName, aie::ShaderProgram& _shader);
 
-	bool LoadQuad();
-	void DrawQuad();
+	bool LoadPostProcessing();
+	void PostProcessDraw();
 
+	ObjModel* LoadObjModel(char* _shaderName, char* _objFilePath, bool _flipTextures);
+	
 protected:
 	SimpleCamera m_camera;
 
@@ -57,7 +61,7 @@ protected:
 	std::vector<ObjModel> m_models;
 
 	// Post-Processing
-	aie::ShaderProgram m_quadShader;
-	Mesh m_quadMesh;
-	mat4 m_quadTransform;
+	aie::ShaderProgram m_postProcessShader;
+	Mesh m_postProcessQuad;
+	int m_postProcessEffect = -1;
 };
