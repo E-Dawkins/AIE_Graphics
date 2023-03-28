@@ -1,7 +1,6 @@
 #include "GraphicsApp.h"
 
 int main() {
-	
 	// allocation
 	GraphicsApp* app;
 

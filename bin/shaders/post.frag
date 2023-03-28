@@ -84,13 +84,15 @@ vec4 Sepia(vec2 _texCoord)
 vec4 Scanlines(vec2 _texCoord)
 {
     vec4 color = texture(colorTarget, _texCoord);
+
+    float lineCount = windowHeight * 1.3f;
     
-    float count = windowHeight * 1.3f;
-    vec2 s1 = vec2(sin(_texCoord.y * count), cos(_texCoord.y * count * time));
-    vec3 scanLines = vec3(s1.x, s1.y, s1.x);
+    float scaledY = (_texCoord.y + time * 0.1f);
+    vec2 s1 = vec2(sin(scaledY * lineCount), cos(scaledY * lineCount));
+    vec4 scanLines = vec4(s1.x, s1.y, s1.x, 1);
     
-    color += color * vec4(scanLines, 1) * 0.3f;
-    color += color * sin(110.0f * time) * 0.03f;
+    color += color * scanLines * 0.3f;
+    color += color * sin(110.0f * time) * 0.02f;
     
     return color;
 }
@@ -108,9 +110,7 @@ vec4 Grayscale(vec2 _texCoord)
 
 vec4 Invert(vec2 _texCoord)
 {
-    vec4 origColor = texture(colorTarget, _texCoord);
-    
-    return vec4(1 - origColor.r, 1 - origColor.g, 1 - origColor.b, 1);
+    return vec4(1 - texture(colorTarget, _texCoord).rgb, 1);
 }
 
 vec4 Pixelizer(vec2 _texCoord)
@@ -188,22 +188,22 @@ void main()
         }
         case 7: // Pixelizer
         {
-            FragColor = Default(texCoord);
+            FragColor = Pixelizer(texCoord);
             break;
         }
         case 8: // Posterization
         {
-            FragColor = Default(texCoord);
+            FragColor = Posterization(texCoord);
             break;
         }
         case 9: // Distance Fog
         {
-            FragColor = Default(texCoord);
+            FragColor = DistanceFog(texCoord);
             break;
         }
         case 10: // Depth of Field
         {
-            FragColor = Default(texCoord);
+            FragColor = DepthOfField(texCoord);
             break;
         }
     }

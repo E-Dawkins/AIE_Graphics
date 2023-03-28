@@ -26,6 +26,7 @@ public:
     mat4 GetViewMatrix();
     float GetAspectRatio();
     float GetSensitivity();
+    mat4 GetTransform();
 
     // Setters
     void SetPosition(vec3 _position);

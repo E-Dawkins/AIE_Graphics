@@ -133,6 +133,11 @@ float SimpleCamera::GetSensitivity()
     return m_sensitivity;
 }
 
+mat4 SimpleCamera::GetTransform()
+{
+    return m_worldTransform;
+}
+
 void SimpleCamera::SetPosition(vec3 _position)
 {
     m_worldTransform[3] = vec4(_position, 1);

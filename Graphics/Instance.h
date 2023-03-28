@@ -1,7 +1,6 @@
 #pragma once
-#include <glm/glm.hpp>
-
 #include "Mesh.h"
+
 class Scene;
 
 namespace aie

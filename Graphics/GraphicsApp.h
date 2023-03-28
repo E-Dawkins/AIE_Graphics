@@ -8,6 +8,7 @@
 #include "SimpleCamera.h"
 #include "Scene.h"
 #include "Instance.h"
+#include "ParticleEmitter.h"
 #include "RenderTarget.h"
 
 struct ObjModel
@@ -48,20 +49,26 @@ public:
 	bool LoadPostProcessing();
 	void PostProcessDraw();
 
+	bool LoadParticleSystem();
+	void ParticleSystemDraw();
+
 	ObjModel* LoadObjModel(char* _shaderName, char* _objFilePath, bool _flipTextures);
 	
 protected:
-	SimpleCamera m_camera;
+	SimpleCamera			m_camera;
 
-	aie::RenderTarget m_renderTarget;
+	aie::RenderTarget		m_renderTarget;
 
-	int m_sceneIndex = 0;
-	std::vector<Scene*> m_scenes;
+	int						m_sceneIndex = 0;
+	std::vector<Scene*>		m_scenes;
 
-	std::vector<ObjModel> m_models;
+	std::vector<ObjModel>	m_models;
+	
+	aie::ShaderProgram		m_postProcessShader;
+	Mesh					m_postProcessQuad;
+	int						m_postProcessEffect = -1;
 
-	// Post-Processing
-	aie::ShaderProgram m_postProcessShader;
-	Mesh m_postProcessQuad;
-	int m_postProcessEffect = -1;
+	ParticleEmitter*		m_emitter;
+	aie::ShaderProgram		m_particleShader;
+	mat4					m_particleEmitTransform;
 };

@@ -1,5 +1,6 @@
 #include "GraphicsApp.h"
 
+#include <gl_core_4_4.h>
 #include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -25,7 +26,7 @@ bool GraphicsApp::startup()
 
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
-	
+		
 	return LaunchScenes();
 }
 
@@ -52,6 +53,8 @@ void GraphicsApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
+	m_emitter->Update(deltaTime, m_camera.GetTransform());
+
 	ImGuiRefresher();
 }
 
@@ -62,6 +65,9 @@ void GraphicsApp::draw()
 	
 	// wipe the screen to the background colour
 	clearScreen();
+
+	ParticleSystemDraw();
+	
 	GetActiveScene()->Draw();
 
 	// Unbind the target to return to the backbuffer, then re-clear the screen
@@ -75,6 +81,9 @@ bool GraphicsApp::LaunchScenes()
 {
 	m_camera = SimpleCamera();
 	m_camera.SetPosition(vec3(0, 1, -3));
+
+	if (!LoadParticleSystem())
+		return false;
 	
 	if (!m_renderTarget.initialise(1, getWindowWidth(), getWindowHeight()))
 		return false;
@@ -188,8 +197,8 @@ void GraphicsApp::ImGuiRefresher()
 	ImGui::End();
 
 	ImGui::Begin("Post Processing");
-
-	ImGui::InputInt("Post Process Effect", &m_postProcessEffect);
+	
+	ImGui::SliderInt("Post Process Effect", &m_postProcessEffect, -1, 10);
 	
 	ImGui::End();
 
@@ -291,6 +300,35 @@ void GraphicsApp::PostProcessDraw()
 	m_renderTarget.getTarget(0).bind(0);
 
 	m_postProcessQuad.Draw();
+}
+
+bool GraphicsApp::LoadParticleSystem()
+{
+	if (!LoadShader("particle", m_particleShader))
+		return false;
+
+	m_emitter = new ParticleEmitter();
+	m_emitter->Initialise(1000, 500, .1f, 1.f, .1f, 1,
+		0.5f, .05f, vec4(1, 0, 0, 1), vec4(1, 0.5, 0, 1));
+
+	m_emitter->SetGravity(true, vec3(0, -0.1f, 0));
+	
+	m_particleEmitTransform = mat4(1);
+
+	return true;
+}
+
+void GraphicsApp::ParticleSystemDraw()
+{
+	m_particleEmitTransform = translate(m_particleEmitTransform,
+		vec3(cos(getTime()), 0, 0) * 0.1f);
+
+	m_emitter->UpdatePosition(m_particleEmitTransform[3]);
+	
+	m_particleShader.bind();
+	m_particleShader.bindUniform("ProjectionViewModel",
+		m_camera.GetProjectionViewMatrix() * m_particleEmitTransform);
+	m_emitter->Draw();
 }
 
 ObjModel* GraphicsApp::LoadObjModel(char* _shaderName, char* _objFilePath, bool _flipTextures)
