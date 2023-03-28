@@ -57,13 +57,13 @@ public:
 protected:
 	SimpleCamera			m_camera;
 
-	aie::RenderTarget		m_renderTarget;
 
 	int						m_sceneIndex = 0;
 	std::vector<Scene*>		m_scenes;
 
 	std::vector<ObjModel>	m_models;
 	
+	aie::RenderTarget		m_renderTarget;
 	aie::ShaderProgram		m_postProcessShader;
 	Mesh					m_postProcessQuad;
 	int						m_postProcessEffect = -1;

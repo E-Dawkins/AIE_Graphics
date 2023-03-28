@@ -3,6 +3,8 @@
 in vec2 vTexCoord;
 
 uniform sampler2D colorTarget;
+uniform sampler2D depthTarget;
+
 uniform int postProcessTarget;
 uniform int windowWidth;
 uniform int windowHeight;
@@ -113,19 +115,51 @@ vec4 Invert(vec2 _texCoord)
     return vec4(1 - texture(colorTarget, _texCoord).rgb, 1);
 }
 
-vec4 Pixelizer(vec2 _texCoord)
+vec4 Pixelization(vec2 _texCoord)
 {
-    return vec4(1);
+    vec2 pixelSize = vec2(15);
+    
+    float offsetX = pixelSize.x * (1.0f / windowWidth);
+    float offsetY = pixelSize.y * (1.0f / windowHeight);
+    
+    vec2 offsetCoord = vec2(offsetX * floor(_texCoord.x / offsetX),
+                            offsetY * floor(_texCoord.y / offsetY));
+    
+    return texture(colorTarget, offsetCoord);
 }
 
 vec4 Posterization(vec2 _texCoord)
 {
-    return vec4(1);
+    vec3 origColor = texture(colorTarget, _texCoord).rgb;
+    
+    origColor = sqrt(origColor);
+
+    // Limit the output to only 8 colors (8-bit color depth?)
+    origColor *= 8;
+    origColor = floor(origColor);
+    origColor /= 8;
+    
+    origColor *= origColor;
+    
+    return vec4(origColor, 1);
 }
 
 vec4 DistanceFog(vec2 _texCoord)
 {
-    return vec4(1);
+    // Get the fog factor (depth value) from the depth target texture, and invert it
+    float fogFactor = 1 - texture(depthTarget, _texCoord).r;
+    
+    // Set the fog factor to be scaled by a start value, then clamp it to 0 -> 1
+    float fogStart = 50;
+    fogFactor *= fogStart;
+    fogFactor = clamp(fogFactor, 0, 1);
+    
+    // The color that the fog will fade to
+    vec4 fogColor = vec4(1, 1, 1, 0);
+
+    // Return a color that is linear blended between render color and fog color,
+    // by the inverted fog factor (why invert again? I dont know, but it worked :D)
+    return mix(texture(colorTarget, _texCoord), fogColor, 1 - fogFactor);
 }
 
 vec4 DepthOfField(vec2 _texCoord)
@@ -186,9 +220,9 @@ void main()
             FragColor = Invert(texCoord);
             break;
         }
-        case 7: // Pixelizer
+        case 7: // Pixelization
         {
-            FragColor = Pixelizer(texCoord);
+            FragColor = Pixelization(texCoord);
             break;
         }
         case 8: // Posterization

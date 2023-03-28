@@ -85,7 +85,7 @@ bool GraphicsApp::LaunchScenes()
 	if (!LoadParticleSystem())
 		return false;
 	
-	if (!m_renderTarget.initialise(1, getWindowWidth(), getWindowHeight()))
+	if (!m_renderTarget.initialise(1, getWindowWidth(), getWindowHeight(), true))
 		return false;
 
 	if (!LoadPostProcessing())
@@ -292,12 +292,15 @@ void GraphicsApp::PostProcessDraw()
 	m_postProcessShader.bind();
 	
 	m_postProcessShader.bindUniform("colorTarget", 0);
+	m_postProcessShader.bindUniform("depthTarget", 1);
+	
 	m_postProcessShader.bindUniform("postProcessTarget", m_postProcessEffect);
 	m_postProcessShader.bindUniform("windowWidth", (int)getWindowWidth());
 	m_postProcessShader.bindUniform("windowHeight", (int)getWindowHeight());
 	m_postProcessShader.bindUniform("time", getTime());
 
 	m_renderTarget.getTarget(0).bind(0);
+	m_renderTarget.bindDepthTarget(1);
 
 	m_postProcessQuad.Draw();
 }
