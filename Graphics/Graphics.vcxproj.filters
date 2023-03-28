@@ -34,6 +34,12 @@
     <Filter Include="Header Files\Meshes">
       <UniqueIdentifier>{13420e29-27cb-4313-89b0-9d0ba5371ee5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Instances">
+      <UniqueIdentifier>{f742b603-eccc-4bb2-858b-67850da7129a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Instances">
+      <UniqueIdentifier>{ca2d69b4-92d0-41b7-bb23-a03e834938d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -57,9 +63,6 @@
     <ClCompile Include="SolarSystem.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Instance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="OrbitalCamera.cpp">
       <Filter>Source Files\Cameras</Filter>
     </ClCompile>
@@ -74,6 +77,15 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Instance.cpp">
+      <Filter>Source Files\Instances</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshInstance.cpp">
+      <Filter>Source Files\Instances</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjMeshInstance.cpp">
+      <Filter>Source Files\Instances</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,9 +109,6 @@
     </ClInclude>
     <ClInclude Include="SolarSystem.h">
       <Filter>Header Files\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Instance.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimpleCamera.h">
       <Filter>Header Files\Cameras</Filter>
@@ -136,6 +145,15 @@
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Instance.h">
+      <Filter>Header Files\Instances</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshInstance.h">
+      <Filter>Header Files\Instances</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjMeshInstance.h">
+      <Filter>Header Files\Instances</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

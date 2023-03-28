@@ -9,6 +9,7 @@
 #include "Cone.h"
 #include "Cube.h"
 #include "Cylinder.h"
+#include "ObjMeshInstance.h"
 #include "Plane.h"
 #include "Pyramid.h"
 #include "Quad.h"
@@ -111,11 +112,11 @@ bool GraphicsApp::LoadModelScene()
 	ObjModel* dragon = LoadObjModel("phong", "./stanford/dragon.obj", true);
 	
 	// Add models to scene
-	m_scenes.back()->AddInstance(new Instance(vec3(0), vec3(0, 180.f, 0),
+	m_scenes.back()->AddInstance(new ObjMeshInstance(vec3(0), vec3(0, 180.f, 0),
 		vec3(0.5f), trooper->mesh, trooper->shader));
-	m_scenes.back()->AddInstance(new Instance(vec3(2, 0.25f, 0), vec3(0), vec3(0.15f),
+	m_scenes.back()->AddInstance(new ObjMeshInstance(vec3(2, 0.25f, 0), vec3(0), vec3(0.15f),
 		spear->mesh, spear->shader));
-	m_scenes.back()->AddInstance(new Instance(vec3(-2, 0.6f, 0), vec3(0), vec3(0.05f),
+	m_scenes.back()->AddInstance(new ObjMeshInstance(vec3(-2, 0.6f, 0), vec3(0), vec3(0.05f),
 		dragon->mesh, dragon->shader));
 
 	return true;
@@ -188,7 +189,7 @@ void GraphicsApp::ImGuiRefresher()
 
 	ImGui::Begin("Post Processing");
 
-	ImGui::InputInt("Post Process Effect", &m_postProcessEffect, 1);
+	ImGui::InputInt("Post Process Effect", &m_postProcessEffect);
 	
 	ImGui::End();
 
@@ -283,6 +284,10 @@ void GraphicsApp::PostProcessDraw()
 	
 	m_postProcessShader.bindUniform("colorTarget", 0);
 	m_postProcessShader.bindUniform("postProcessTarget", m_postProcessEffect);
+	m_postProcessShader.bindUniform("windowWidth", (int)getWindowWidth());
+	m_postProcessShader.bindUniform("windowHeight", (int)getWindowHeight());
+	m_postProcessShader.bindUniform("time", getTime());
+
 	m_renderTarget.getTarget(0).bind(0);
 
 	m_postProcessQuad.Draw();

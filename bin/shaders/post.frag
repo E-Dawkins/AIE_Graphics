@@ -4,6 +4,9 @@ in vec2 vTexCoord;
 
 uniform sampler2D colorTarget;
 uniform int postProcessTarget;
+uniform int windowWidth;
+uniform int windowHeight;
+uniform float time;
 
 out vec4 FragColor;
 
@@ -42,6 +45,94 @@ vec4 Distort(vec2 _texCoord)
     return texture(colorTarget, newCoord);
 }
 
+vec4 EdgeDetection(vec2 _texCoord)
+{
+    float w = 1.0f / windowWidth;
+    float h = 1.0f / windowHeight;
+    
+    vec4 k[9];
+    
+    k[0] = texture(colorTarget, _texCoord + vec2(-w, -h));
+    k[1] = texture(colorTarget, _texCoord + vec2( 0, -h));
+    k[2] = texture(colorTarget, _texCoord + vec2( w, -h));
+    k[3] = texture(colorTarget, _texCoord + vec2(-w,  0));
+    k[4] = texture(colorTarget, _texCoord);
+    k[5] = texture(colorTarget, _texCoord + vec2( w,  0));
+    k[6] = texture(colorTarget, _texCoord + vec2(-w,  h));
+    k[7] = texture(colorTarget, _texCoord + vec2( 0,  h));
+    k[8] = texture(colorTarget, _texCoord + vec2( w,  h));
+    
+    vec4 sobelEdgeH = k[2] + (2.0f * k[5]) + k[8] - (k[0] + (2.0f * k[3]) + k[6]);
+    vec4 sobelEdgeV = k[0] + (2.0f * k[1]) + k[2] - (k[6] + (2.0f * k[7]) + k[8]);
+    
+    vec4 sobel = sqrt((sobelEdgeH * sobelEdgeH) + (sobelEdgeV * sobelEdgeV));
+    
+    return vec4(1.0f - sobel.rgb, 1.0f);
+}
+
+vec4 Sepia(vec2 _texCoord)
+{
+    vec4 origColor = texture(colorTarget, _texCoord);
+    
+    float newR = origColor.r * 0.393 + origColor.g * 0.769 + origColor.b * 0.189;
+    float newG = origColor.r * 0.349 + origColor.g * 0.686 + origColor.b * 0.168;
+    float newB = origColor.r * 0.272 + origColor.g * 0.534 + origColor.b * 0.131;
+    
+    return vec4(newR, newG, newB, 1);
+}
+
+vec4 Scanlines(vec2 _texCoord)
+{
+    vec4 color = texture(colorTarget, _texCoord);
+    
+    float count = windowHeight * 1.3f;
+    vec2 s1 = vec2(sin(_texCoord.y * count), cos(_texCoord.y * count * time));
+    vec3 scanLines = vec3(s1.x, s1.y, s1.x);
+    
+    color += color * vec4(scanLines, 1) * 0.3f;
+    color += color * sin(110.0f * time) * 0.03f;
+    
+    return color;
+}
+
+vec4 Grayscale(vec2 _texCoord)
+{
+    vec4 origColor = texture(colorTarget, _texCoord);
+    
+    vec3 grayColor = vec3(0.299 * origColor.r, 0.587 * origColor.g, 0.114 * origColor.b);
+    
+    float gray = grayColor.r + grayColor.g + grayColor.b;
+
+    return vec4(gray, gray, gray, 1);
+}
+
+vec4 Invert(vec2 _texCoord)
+{
+    vec4 origColor = texture(colorTarget, _texCoord);
+    
+    return vec4(1 - origColor.r, 1 - origColor.g, 1 - origColor.b, 1);
+}
+
+vec4 Pixelizer(vec2 _texCoord)
+{
+    return vec4(1);
+}
+
+vec4 Posterization(vec2 _texCoord)
+{
+    return vec4(1);
+}
+
+vec4 DistanceFog(vec2 _texCoord)
+{
+    return vec4(1);
+}
+
+vec4 DepthOfField(vec2 _texCoord)
+{
+    return vec4(1);
+}
+
 void main()
 {
     // This will calculate the texel size
@@ -72,27 +163,27 @@ void main()
         }
         case 2: // Edge Detection
         {
-            FragColor = Default(texCoord);
+            FragColor = EdgeDetection(texCoord);
             break;
         }
         case 3: // Sepia
         {
-            FragColor = Default(texCoord);
+            FragColor = Sepia(texCoord);
             break;
         }
         case 4: // Scanlines
         {
-            FragColor = Default(texCoord);
+            FragColor = Scanlines(texCoord);
             break;
         }
         case 5: // Grayscale
         {
-            FragColor = Default(texCoord);
+            FragColor = Grayscale(texCoord);
             break;
         }
         case 6: // Invert
         {
-            FragColor = Default(texCoord);
+            FragColor = Invert(texCoord);
             break;
         }
         case 7: // Pixelizer

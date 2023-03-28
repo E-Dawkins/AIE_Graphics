@@ -170,7 +170,9 @@
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshInstance.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
+    <ClCompile Include="ObjMeshInstance.cpp" />
     <ClCompile Include="OrbitalCamera.cpp" />
     <ClCompile Include="Planet.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
@@ -187,7 +189,9 @@
     <ClInclude Include="GraphicsApp.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshInstance.h" />
     <ClInclude Include="OBJMesh.h" />
+    <ClInclude Include="ObjMeshInstance.h" />
     <ClInclude Include="OrbitalCamera.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Planet.h" />
