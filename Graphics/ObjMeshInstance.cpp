@@ -1,9 +1,8 @@
 #include "ObjMeshInstance.h"
 
-#include "OBJMesh.h"
 #include "Scene.h"
 #include "Shader.h"
-#include "SimpleCamera.h"
+#include "FlyCamera.h"
 
 ObjMeshInstance::ObjMeshInstance(mat4 _transform, aie::OBJMesh& _mesh, aie::ShaderProgram& _shader)
 {

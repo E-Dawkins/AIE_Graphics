@@ -4,7 +4,7 @@
 #include <vector>
 #include <list>
 
-class SimpleCamera;
+class FlyCamera;
 class Instance;
 
 const int MAX_LIGHTS = 4;
@@ -33,7 +33,7 @@ struct Light
 class Scene
 {
 public:
-    Scene(char* _sceneName, SimpleCamera& _camera, glm::vec2 _windowSize,
+    Scene(char* _sceneName, FlyCamera& _camera, glm::vec2 _windowSize,
         Light& _light, glm::vec3 _ambientLightColor);
     ~Scene();
     
@@ -52,7 +52,7 @@ public:
     void SetImGuiFunction(std::function<void()> _delegate) { m_delegate = _delegate; }
 
     char* GetSceneName()                    { return m_sceneName; }
-    SimpleCamera* GetCamera()               { return m_camera; }
+    FlyCamera* GetCamera()               { return m_camera; }
     glm::vec2 GetWindowSize()               { return m_windowSize; }
     glm::vec3& GetAmbientLightColor()       { return m_ambientLightColor; }
     Light& GetLight()                       { return m_light; }
@@ -64,7 +64,7 @@ public:
 protected:
     char*                   m_sceneName;
     
-    SimpleCamera*           m_camera;
+    FlyCamera*           m_camera;
     glm::vec2               m_windowSize;
 
     Light                   m_sunLight;

@@ -2,7 +2,7 @@
 #include "Scene.h"
 
 #include "Planet.h"
-#include "SimpleCamera.h"
+#include "FlyCamera.h"
 
 #include <vector>
 
@@ -23,5 +23,5 @@ protected:
 
     float m_solarSystemSpeed;
 
-    SimpleCamera* m_camera;
+    FlyCamera* m_camera;
 };

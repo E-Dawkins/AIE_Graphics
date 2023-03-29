@@ -1,7 +1,5 @@
 #include "OrbitalCamera.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-
 OrbitalCamera::OrbitalCamera(mat4& _target, vec3 _targetOffset, float _orbitalSpeed)
 {
     m_target = _target;

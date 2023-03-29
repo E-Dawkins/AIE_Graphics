@@ -8,7 +8,7 @@ SolarSystem::SolarSystem()
 {
     m_solarSystemSpeed = 1.f;
     
-    m_camera = new SimpleCamera();
+    m_camera = new FlyCamera();
     m_camera->SetPosition(vec3(0, 0, -20));
 }
 

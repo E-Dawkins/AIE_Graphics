@@ -1,16 +1,10 @@
 #pragma once
-#include "SimpleCamera.h"
+#include "FlyCamera.h"
 
-class StationaryCamera : public SimpleCamera
+class StationaryCamera : public BaseCamera
 {
 public:
     StationaryCamera() = default;
     StationaryCamera(vec3 _position, vec3 _rotation);
-    
-    void Update(float _dt) override {}
-    
-    void SetRotation(vec3 _rotation);
-
-    mat4 GetRotation();
 };
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Mesh.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 class Scene;
 
@@ -8,26 +8,31 @@ namespace aie
     class ShaderProgram;
 }
 
+using glm::mat4;
+using glm::vec3;
+
 class Instance
 {
 public:
     Instance() = default;
+    virtual ~Instance()
+    {
+        delete m_shader;
+    }
     
-    Instance(glm::mat4 _transform, Mesh& _mesh,
-                aie::ShaderProgram& _shader, glm::vec4 _color = glm::vec4(1));
-    Instance(glm::vec3 _position, glm::vec3 _eulerAngles, glm::vec3 _scale,
-                Mesh& _mesh, aie::ShaderProgram& _shader, glm::vec4 _color = glm::vec4(1));
-    
-    virtual void Draw(Scene* _scene);
+    virtual void Draw(Scene* _scene) {}
 
-    static glm::mat4 MakeTransform(glm::vec3 _position,
-        glm::vec3 _eulerAngles, glm::vec3 _scale);
+    static mat4 MakeTransform(vec3 _position, vec3 _eulerAngles, vec3 _scale)
+    {
+        return translate(mat4(1), _position)
+        * rotate(mat4(1), glm::radians(_eulerAngles.z), vec3(0, 0, 1))
+        * rotate(mat4(1), glm::radians(_eulerAngles.y), vec3(0, 1, 0))
+        * rotate(mat4(1), glm::radians(_eulerAngles.x), vec3(1, 0, 0))
+        * scale(mat4(1), _scale);
+    }
     
 protected:
-    glm::mat4 m_transform;
+    mat4 m_transform;
     aie::ShaderProgram* m_shader;
-    
-    Mesh* m_mesh;
-    glm::vec4 m_color;
 };
 

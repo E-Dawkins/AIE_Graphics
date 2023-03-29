@@ -66,9 +66,6 @@
     <ClCompile Include="OrbitalCamera.cpp">
       <Filter>Source Files\Cameras</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleCamera.cpp">
-      <Filter>Source Files\Cameras</Filter>
-    </ClCompile>
     <ClCompile Include="StationaryCamera.cpp">
       <Filter>Source Files\Cameras</Filter>
     </ClCompile>
@@ -78,9 +75,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Instance.cpp">
-      <Filter>Source Files\Instances</Filter>
-    </ClCompile>
     <ClCompile Include="MeshInstance.cpp">
       <Filter>Source Files\Instances</Filter>
     </ClCompile>
@@ -89,6 +83,12 @@
     </ClCompile>
     <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseCamera.cpp">
+      <Filter>Source Files\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="FlyCamera.cpp">
+      <Filter>Source Files\Cameras</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -112,9 +112,6 @@
     </ClInclude>
     <ClInclude Include="SolarSystem.h">
       <Filter>Header Files\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleCamera.h">
-      <Filter>Header Files\Cameras</Filter>
     </ClInclude>
     <ClInclude Include="StationaryCamera.h">
       <Filter>Header Files\Cameras</Filter>
@@ -160,6 +157,12 @@
     </ClInclude>
     <ClInclude Include="ParticleEmitter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCamera.h">
+      <Filter>Header Files\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="FlyCamera.h">
+      <Filter>Header Files\Cameras</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

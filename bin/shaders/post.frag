@@ -36,6 +36,39 @@ vec4 BoxBlur(vec2 _texCoord)
     return color / 9;
 }
 
+vec4 GaussianBlur(vec2 _texCoord)
+{
+    float k[25] = 
+    {
+        1,  4,  6,  4, 1,
+        4, 16, 24, 16, 4,
+        6, 24, 36, 24, 6,
+        4, 16, 24, 16, 4,
+        1,  4,  6,  4, 1
+    };
+    
+    vec4 color = texture(colorTarget, _texCoord);
+    
+    vec2 pixelSize = vec2(1.0 / windowWidth, 1.0 / windowHeight);
+    vec2 offset = pixelSize * 2.5;
+    vec2 start = _texCoord - offset;
+    vec2 current = start;
+
+    for (int i = 0; i < 25; i++)
+    {
+        color += texture2D( colorTarget, current ) * k[i];
+
+        current.x += pixelSize.x;
+        if (i % 5 == 4) 
+        {
+            current.x = start.x;
+            current.y += pixelSize.y;
+        }
+    }
+    
+    return color / 256.0;
+}
+
 vec4 Distort(vec2 _texCoord)
 {
     vec2 mid = vec2(0.5f);
@@ -164,7 +197,33 @@ vec4 DistanceFog(vec2 _texCoord)
 
 vec4 DepthOfField(vec2 _texCoord)
 {
-    return vec4(1);
+    float blurFactor = 1 - texture(depthTarget, _texCoord).r;
+    
+    float blurStart = 20;
+    blurFactor *= blurStart;
+    blurFactor = clamp(blurFactor, 0, 1);
+    
+    vec4 blurColor = GaussianBlur(_texCoord);
+    
+    return mix(texture(colorTarget, _texCoord), blurColor, 1 - blurFactor);
+}
+
+vec4 Vignette(vec2 _texCoord)
+{
+    float distFromCenter = distance(_texCoord, vec2(0.5f));
+    float clearRadius = 0.4;
+    
+    // Only apply the vignette outside the clear radius
+    if (distFromCenter >= clearRadius)
+    {
+        vec4 origColor = texture(colorTarget, _texCoord);
+        vec4 vignetteColor = vec4(0, 0, 0, 1);
+        
+        float mixPercent = (distFromCenter - clearRadius) / (1 - clearRadius);
+        
+        return mix(origColor, vignetteColor, clamp(mixPercent, 0, 1));
+    }
+    else return texture(colorTarget, _texCoord);
 }
 
 void main()
@@ -190,54 +249,64 @@ void main()
             FragColor = BoxBlur(texCoord);
             break;
         }
-        case 1: // Distort
+        case 1: // Gaussian Blur
+        {
+            FragColor = GaussianBlur(texCoord);
+            break;
+        }
+        case 2: // Distort
         {
             FragColor = Distort(texCoord);
             break;
         }
-        case 2: // Edge Detection
+        case 3: // Edge Detection
         {
             FragColor = EdgeDetection(texCoord);
             break;
         }
-        case 3: // Sepia
+        case 4: // Sepia
         {
             FragColor = Sepia(texCoord);
             break;
         }
-        case 4: // Scanlines
+        case 5: // Scanlines
         {
             FragColor = Scanlines(texCoord);
             break;
         }
-        case 5: // Grayscale
+        case 6: // Grayscale
         {
             FragColor = Grayscale(texCoord);
             break;
         }
-        case 6: // Invert
+        case 7: // Invert
         {
             FragColor = Invert(texCoord);
             break;
         }
-        case 7: // Pixelization
+        case 8: // Pixelization
         {
             FragColor = Pixelization(texCoord);
             break;
         }
-        case 8: // Posterization
+        case 9: // Posterization
         {
             FragColor = Posterization(texCoord);
             break;
         }
-        case 9: // Distance Fog
+        case 10: // Distance Fog
         {
             FragColor = DistanceFog(texCoord);
             break;
         }
-        case 10: // Depth of Field
+        case 11: // Depth of Field - uses gaussian blur
         {
             FragColor = DepthOfField(texCoord);
+            break;
+        }
+        case 12: // Vignette
+        {
+            FragColor = Vignette(texCoord);
             break;
         }
     }

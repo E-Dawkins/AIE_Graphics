@@ -1,9 +1,11 @@
 #include "Scene.h"
 
-#include "Instance.h"
-#include "SimpleCamera.h"
+#include <Gizmos.h>
 
-Scene::Scene(char* _sceneName, SimpleCamera& _camera, vec2 _windowSize, Light& _light, vec3 _ambientLightColor)
+#include "Instance.h"
+#include "FlyCamera.h"
+
+Scene::Scene(char* _sceneName, FlyCamera& _camera, vec2 _windowSize, Light& _light, vec3 _ambientLightColor)
 {
     m_sceneName = _sceneName;
     m_camera = &_camera;
@@ -31,6 +33,8 @@ void Scene::Draw()
     {
         m_pointLightPositions[i] = m_pointLights[i].direction;
         m_pointLightColors[i] = m_pointLights[i].color;
+
+        aie::Gizmos::addSphere(m_pointLights[i].direction, 0.05f, 8, 8, vec4(m_pointLights[i].color, 1));
     }
     
     for (auto it = m_instances.begin(); it != m_instances.end(); it++)

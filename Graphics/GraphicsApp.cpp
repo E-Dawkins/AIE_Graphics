@@ -1,8 +1,6 @@
 #include "GraphicsApp.h"
 
-#include <gl_core_4_4.h>
 #include <imgui.h>
-#include <glm/gtc/matrix_transform.hpp>
 
 #include "Gizmos.h"
 #include "Input.h"
@@ -10,11 +8,13 @@
 #include "Cone.h"
 #include "Cube.h"
 #include "Cylinder.h"
-#include "ObjMeshInstance.h"
 #include "Plane.h"
 #include "Pyramid.h"
 #include "Quad.h"
 #include "Sphere.h"
+
+#include "MeshInstance.h"
+#include "ObjMeshInstance.h"
 
 using aie::Gizmos;
 
@@ -67,19 +67,20 @@ void GraphicsApp::draw()
 	clearScreen();
 
 	ParticleSystemDraw();
-	
 	GetActiveScene()->Draw();
+	Gizmos::draw(m_camera.GetProjectionViewMatrix());
 
 	// Unbind the target to return to the backbuffer, then re-clear the screen
 	m_renderTarget.unbind();
 	clearScreen();
 	
 	PostProcessDraw();
+
 }
 
 bool GraphicsApp::LaunchScenes()
 {
-	m_camera = SimpleCamera();
+	m_camera = FlyCamera();
 	m_camera.SetPosition(vec3(0, 1, -3));
 
 	if (!LoadParticleSystem())
@@ -112,8 +113,8 @@ bool GraphicsApp::LoadModelScene()
 	m_scenes.back()->SetImGuiFunction([this] { ImGuiModels(); });
 
 	// Add point lights, at position with color and intensity
-	m_scenes.back()->AddPointLights(vec3(5, 3, 0), vec3(1, 0, 0), 50);
-	m_scenes.back()->AddPointLights(vec3(-5, 3, 0), vec3(0, 0, 1), 50);
+	m_scenes.back()->AddPointLights(vec3(1, 1, 0), vec3(1, 0, 0), 10);
+	m_scenes.back()->AddPointLights(vec3(-1, 1, 0), vec3(0, 0, 1), 10);
 
 	// Load models
 	ObjModel* trooper = LoadObjModel("normalLit", "./stormtrooper/stormtrooper.obj", true);
@@ -157,19 +158,19 @@ bool GraphicsApp::LoadPrimitiveScene()
 	Cylinder* cylinder = new Cylinder(10);
 
 	// Add all primitives to scene
-	m_scenes.back()->AddInstance(new Instance(vec3(0), vec3(0),
+	m_scenes.back()->AddInstance(new MeshInstance(vec3(0), vec3(0),
 		vec3(1), *quad, *colorShader, vec4(1, 0, 1, 1)));
-	m_scenes.back()->AddInstance(new Instance(vec3(0, -1, 0), vec3(0),
+	m_scenes.back()->AddInstance(new MeshInstance(vec3(0, -1, 0), vec3(0),
 		vec3(1), *plane, *colorShader));
-	m_scenes.back()->AddInstance(new Instance(vec3(0, 1, 0), vec3(0),
+	m_scenes.back()->AddInstance(new MeshInstance(vec3(0, 1, 0), vec3(0),
 		vec3(1), *cube, *colorShader, vec4(1, 0, 0, 1)));
-	m_scenes.back()->AddInstance(new Instance(vec3(-2, 1, 0), vec3(0),
+	m_scenes.back()->AddInstance(new MeshInstance(vec3(-2, 1, 0), vec3(0),
 		vec3(1), *pyramid, *colorShader, vec4(0, 1, 0, 1)));
-	m_scenes.back()->AddInstance(new Instance(vec3(2, 1, 0), vec3(0),
+	m_scenes.back()->AddInstance(new MeshInstance(vec3(2, 1, 0), vec3(0),
 		vec3(1), *sphere, *colorShader, vec4(0, 0, 1, 1)));
-	m_scenes.back()->AddInstance(new Instance(vec3(0, 1, -2), vec3(0),
+	m_scenes.back()->AddInstance(new MeshInstance(vec3(0, 1, -2), vec3(0),
 		vec3(1), *cone, *colorShader, vec4(1, 1, 0, 1)));
-	m_scenes.back()->AddInstance(new Instance(vec3(0, 1, 2), vec3(0),
+	m_scenes.back()->AddInstance(new MeshInstance(vec3(0, 1, 2), vec3(0),
 		vec3(1), *cylinder, *colorShader, vec4(0, 1, 1, 1)));
 	
 	return true;
@@ -177,6 +178,8 @@ bool GraphicsApp::LoadPrimitiveScene()
 
 void GraphicsApp::ImGuiRefresher()
 {
+	/* --- Scene Select --- */
+	
 	ImGui::Begin("Scene Select");
 
 	std::vector<const char*> items;
@@ -188,6 +191,8 @@ void GraphicsApp::ImGuiRefresher()
 	
 	ImGui::End();
 
+	/* --- Camera Settings --- */
+	
 	ImGui::Begin("Camera Settings");
 
 	float tempSens = glm::degrees(m_camera.GetSensitivity());
@@ -196,12 +201,26 @@ void GraphicsApp::ImGuiRefresher()
 	
 	ImGui::End();
 
+	/* --- Post Processing --- */
+	
 	ImGui::Begin("Post Processing");
 	
-	ImGui::SliderInt("Post Process Effect", &m_postProcessEffect, -1, 10);
+	items.clear();
+
+	for (auto effect : m_effects)
+		items.push_back(effect.name);
+
+	ImGui::PushItemWidth(-1);
+
+	static int itemIndex = 0;
+	ImGui::ListBox("", &itemIndex, items.data(), items.size(), (int)items.size());
+
+	m_postProcessEffect = m_effects[itemIndex].type;
 	
 	ImGui::End();
 
+	/* --- Scene ImGui --- */
+	
 	GetActiveScene()->ImGuiRefresher();
 }
 
@@ -275,6 +294,14 @@ bool GraphicsApp::LoadShader(const char* _fileName, aie::ShaderProgram& _shader)
 	return true;
 }
 
+ObjModel* GraphicsApp::LoadObjModel(char* _shaderName, char* _objFilePath, bool _flipTextures)
+{
+	ObjModel* model = new ObjModel();
+	LoadShader(_shaderName, model->shader);
+	LoadObj(_objFilePath, model->mesh, _flipTextures);
+	return model;
+}
+
 bool GraphicsApp::LoadPostProcessing()
 {
 	// Load the simple vert and frag shaders into the m_simpleShader variable
@@ -332,12 +359,4 @@ void GraphicsApp::ParticleSystemDraw()
 	m_particleShader.bindUniform("ProjectionViewModel",
 		m_camera.GetProjectionViewMatrix() * m_particleEmitTransform);
 	m_emitter->Draw();
-}
-
-ObjModel* GraphicsApp::LoadObjModel(char* _shaderName, char* _objFilePath, bool _flipTextures)
-{
-	ObjModel* model = new ObjModel();
-	LoadShader(_shaderName, model->shader);
-	LoadObj(_objFilePath, model->mesh, _flipTextures);
-	return model;
 }
