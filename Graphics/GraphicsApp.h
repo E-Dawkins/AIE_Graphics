@@ -18,12 +18,6 @@ struct ObjModel
 	aie::ShaderProgram shader;
 };
 
-struct PostProcessEffect
-{
-	const char* name;
-	int type;
-};
-
 class GraphicsApp : public aie::Application {
 public:
 	GraphicsApp() = default;
@@ -54,9 +48,6 @@ public:
 	static bool LoadShader(const char *_fileName, aie::ShaderProgram& _shader);
 	ObjModel* LoadObjModel(char* _shaderName, char* _objFilePath, bool _flipTextures);
 
-	bool LoadPostProcessing();
-	void PostProcessDraw();
-
 	bool LoadParticleSystem();
 	void ParticleSystemDraw();
 	
@@ -68,28 +59,7 @@ protected:
 
 	std::vector<ObjModel>	m_models;
 	
-	std::vector<PostProcessEffect> m_effects =
-	{
-		{"Default",			-1},
-		{"Box Blur",		0},
-		{"Gaussian Blur",	1},
-		{"Distort",			2},
-		{"Edge Detection",	3},
-		{"Sepia",			4},
-		{"Scanlines",		5},
-		{"Grayscale",		6},
-		{"Invert",			7},
-		{"Pixelization",	8},
-		{"Posterization",	9},
-		{"Distance Fog",	10},
-		{"Depth of Field",	11},
-		{"Vignette",		12}
-	};
-	
 	aie::RenderTarget		m_renderTarget;
-	aie::ShaderProgram		m_postProcessShader;
-	Mesh					m_postProcessQuad;
-	int						m_postProcessEffect = m_effects[0].type;
 
 	ParticleEmitter*		m_emitter;
 	aie::ShaderProgram		m_particleShader;

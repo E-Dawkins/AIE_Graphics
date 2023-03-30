@@ -12,6 +12,35 @@ BaseCamera::BaseCamera()
     m_sensitivity = glm::radians(15.f);
 }
 
+void BaseCamera::PostProcessLoad()
+{
+    m_postProcessing.shader.loadShader(aie::eShaderStage::VERTEX, "./shaders/post.vert");
+    m_postProcessing.shader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/post.frag");
+
+    if (!m_postProcessing.shader.link())
+        printf("Post Process Shader Error!\n%s", m_postProcessing.shader.getLastError());
+
+    m_postProcessing.screenQuad.InitialiseFullscreenQuad();
+}
+
+void BaseCamera::PostProcessDraw(aie::RenderTarget& _renderTarget)
+{
+    m_postProcessing.shader.bind();
+    
+    m_postProcessing.shader.bindUniform("colorTarget", 0);
+    m_postProcessing.shader.bindUniform("depthTarget", 1);
+    
+    m_postProcessing.shader.bindUniform("postProcessTarget", m_postProcessing.currentEffect);
+    m_postProcessing.shader.bindUniform("windowWidth", (int)ImGui::GetWindowWidth());
+    m_postProcessing.shader.bindUniform("windowHeight", (int)ImGui::GetWindowHeight());
+    m_postProcessing.shader.bindUniform("time", ImGui::GetTime());
+
+    _renderTarget.getTarget(0).bind(0);
+    _renderTarget.bindDepthTarget(1);
+
+    m_postProcessing.screenQuad.Draw();
+}
+
 vec3 BaseCamera::GetPosition()
 {
     return m_worldTransform[3];
@@ -100,6 +129,11 @@ float BaseCamera::GetSensitivity()
 mat4 BaseCamera::GetTransform()
 {
     return m_worldTransform;
+}
+
+PostProcessing& BaseCamera::GetPostProcessing()
+{
+    return m_postProcessing;
 }
 
 void BaseCamera::SetPosition(vec3 _position)

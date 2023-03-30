@@ -60,12 +60,11 @@ void GraphicsApp::update(float deltaTime)
 
 void GraphicsApp::draw()
 {
-	// Bind the render target as the first part of our draw function
+	// Bind the render target to result of last frame draw, then clear screen
 	m_renderTarget.bind();
-	
-	// wipe the screen to the background colour
 	clearScreen();
 
+	// Main render ('draw') loop
 	ParticleSystemDraw();
 	GetActiveScene()->Draw();
 	Gizmos::draw(m_camera.GetProjectionViewMatrix());
@@ -73,23 +72,21 @@ void GraphicsApp::draw()
 	// Unbind the target to return to the backbuffer, then re-clear the screen
 	m_renderTarget.unbind();
 	clearScreen();
-	
-	PostProcessDraw();
 
+	// Apply post processing to result of THIS frames' draw
+	GetActiveScene()->GetCamera()->PostProcessDraw(m_renderTarget);
 }
 
 bool GraphicsApp::LaunchScenes()
 {
 	m_camera = FlyCamera();
 	m_camera.SetPosition(vec3(0, 1, -3));
+	m_camera.PostProcessLoad();
 
 	if (!LoadParticleSystem())
 		return false;
 	
 	if (!m_renderTarget.initialise(1, getWindowWidth(), getWindowHeight(), true))
-		return false;
-
-	if (!LoadPostProcessing())
 		return false;
 	
 	if (!LoadModelScene())
@@ -207,15 +204,18 @@ void GraphicsApp::ImGuiRefresher()
 	
 	items.clear();
 
-	for (auto effect : m_effects)
-		items.push_back(effect.name);
+	auto& postProcessing = GetActiveScene()->GetCamera()->GetPostProcessing();
+	auto effects = postProcessing.effects;
+	
+	for (auto effect : effects)
+		items.push_back(effect.first);
 
 	ImGui::PushItemWidth(-1);
 
 	static int itemIndex = 0;
 	ImGui::ListBox("", &itemIndex, items.data(), items.size(), (int)items.size());
 
-	m_postProcessEffect = m_effects[itemIndex].type;
+	postProcessing.currentEffect = effects[itemIndex].second;
 	
 	ImGui::End();
 
@@ -300,36 +300,6 @@ ObjModel* GraphicsApp::LoadObjModel(char* _shaderName, char* _objFilePath, bool 
 	LoadShader(_shaderName, model->shader);
 	LoadObj(_objFilePath, model->mesh, _flipTextures);
 	return model;
-}
-
-bool GraphicsApp::LoadPostProcessing()
-{
-	// Load the simple vert and frag shaders into the m_simpleShader variable
-	if (!LoadShader("post", m_postProcessShader))
-		return false;
-
-	m_postProcessQuad.InitialiseFullscreenQuad();
-	
-	return true;
-}
-
-void GraphicsApp::PostProcessDraw()
-{
-	// Bind the post process shader and the texture
-	m_postProcessShader.bind();
-	
-	m_postProcessShader.bindUniform("colorTarget", 0);
-	m_postProcessShader.bindUniform("depthTarget", 1);
-	
-	m_postProcessShader.bindUniform("postProcessTarget", m_postProcessEffect);
-	m_postProcessShader.bindUniform("windowWidth", (int)getWindowWidth());
-	m_postProcessShader.bindUniform("windowHeight", (int)getWindowHeight());
-	m_postProcessShader.bindUniform("time", getTime());
-
-	m_renderTarget.getTarget(0).bind(0);
-	m_renderTarget.bindDepthTarget(1);
-
-	m_postProcessQuad.Draw();
 }
 
 bool GraphicsApp::LoadParticleSystem()
