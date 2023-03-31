@@ -2,6 +2,12 @@
 
 #include <Input.h>
 
+FlyCamera::FlyCamera(vec3 _position, vec3 _rotation)
+{
+    m_worldTransform[3] = vec4(_position, 1);
+    SetRotation(_rotation);
+}
+
 void FlyCamera::Update(float _dt)
 {
     aie::Input* input = aie::Input::getInstance();

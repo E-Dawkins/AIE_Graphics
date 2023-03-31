@@ -15,6 +15,7 @@
 
 #include "MeshInstance.h"
 #include "ObjMeshInstance.h"
+#include "StationaryCamera.h"
 
 using aie::Gizmos;
 
@@ -38,8 +39,7 @@ void GraphicsApp::shutdown()
 	{
 		delete* it;
 	}
-
-	delete m_camera;
+	
 	delete m_emitter;
 }
 
@@ -48,7 +48,7 @@ void GraphicsApp::update(float deltaTime)
 	// wipe the gizmos clean for this frame
 	Gizmos::clear();
 
-	m_camera->Update(deltaTime);
+	GetActiveScene()->GetCamera()->Update(deltaTime);
 
 	// quit if we press escape
 	aie::Input* input = aie::Input::getInstance();
@@ -56,7 +56,7 @@ void GraphicsApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
-	m_emitter->Update(deltaTime, m_camera->GetTransform());
+	m_emitter->Update(deltaTime, GetActiveScene()->GetCamera()->GetTransform());
 
 	ImGuiRefresher();
 }
@@ -70,7 +70,7 @@ void GraphicsApp::draw()
 	// Main render ('draw') loop
 	ParticleSystemDraw();
 	GetActiveScene()->Draw();
-	Gizmos::draw(m_camera->GetProjectionViewMatrix());
+	Gizmos::draw(GetActiveScene()->GetCamera()->GetProjectionViewMatrix());
 
 	// Unbind the target to return to the backbuffer, then re-clear the screen
 	m_renderTarget.unbind();
@@ -82,9 +82,6 @@ void GraphicsApp::draw()
 
 bool GraphicsApp::LaunchScenes()
 {
-	m_camera = new FlyCamera();
-	m_camera->SetPosition(vec3(0, 1, -3));
-
 	if (!LoadParticleSystem())
 		return false;
 	
@@ -105,15 +102,25 @@ bool GraphicsApp::LoadModelScene()
 	// Create new scene with global / ambient light
 	Light light = Light(vec3(1, -1, 1), vec3(1), 1.f);
 	vec3 ambientLight = vec3(0.5f);
-	
-	m_scenes.push_back(new Scene("Models", *m_camera, vec2(getWindowWidth(),
-		getWindowHeight()), light, ambientLight));
 
+	// Create camera/s for scene
+	FlyCamera* mainCam = new FlyCamera(vec3(0, 1, -3));
+	StationaryCamera* statCam1 = new StationaryCamera(vec3(0, 1, 3),
+										vec3(0, glm::pi<float>(), 0));
+	
+	// Create scene
+	m_scenes.push_back(new Scene("Models", mainCam,
+		vec2(getWindowWidth(), getWindowHeight()), light, ambientLight));
+
+	// Set ImGui function delegate
 	m_scenes.back()->SetImGuiFunction([this] { ImGuiModels(); });
 
+	// Add camera/s to scene
+	m_scenes.back()->AddCamera(statCam1);
+
 	// Add point lights, at position with color and intensity
-	m_scenes.back()->AddPointLights(vec3(1, 1, 0), vec3(1, 0, 0), 10);
-	m_scenes.back()->AddPointLights(vec3(-1, 1, 0), vec3(0, 0, 1), 10);
+	m_scenes.back()->AddPointLight(vec3(1, 1, 0), vec3(1, 0, 0), 10);
+	m_scenes.back()->AddPointLight(vec3(-1, 1, 0), vec3(0, 0, 1), 10);
 
 	// Load models
 	ObjModel* trooper = LoadObjModel("normalLit", "./stormtrooper/stormtrooper.obj", true);
@@ -136,10 +143,15 @@ bool GraphicsApp::LoadPrimitiveScene()
 	// Create new scene with global / ambient light
 	Light light = Light(vec3(1, -1, 1), vec3(1), 1.f);
 	vec3 ambientLight = vec3(0.5f);
-	
-	m_scenes.push_back(new Scene("Primitives", *m_camera, vec2(getWindowWidth(),
-		getWindowHeight()), light, ambientLight));
 
+	// Create camera/s for scene
+	FlyCamera* mainCam = new FlyCamera(vec3(4, 1.5f, 0), vec3(0, glm::pi<float>() / 2.f, 0));
+	
+	// Create scene
+	m_scenes.push_back(new Scene("Primitives", mainCam,
+		vec2(getWindowWidth(), getWindowHeight()), light, ambientLight));
+
+	// Set ImGui delegate
 	m_scenes.back()->SetImGuiFunction([this] { ImGuiPrimitive(); });
 
 	// Load color shader
@@ -199,7 +211,7 @@ void GraphicsApp::ImGuiModels()
 {
 	ImGui::Begin("Light Settings");
 
-	ImGui::ColorEdit4("Global Light Color", &GetActiveScene()->GetLight().color[0], false);
+	ImGui::ColorEdit4("Global Light Color", &GetActiveScene()->GetSunLight().color[0], false);
 	ImGui::ColorEdit4("Ambient Light Color", &GetActiveScene()->GetAmbientLightColor()[0], false);
 
 	std::vector<Light>& pointLights = GetActiveScene()->GetPointLights();
@@ -296,9 +308,11 @@ void GraphicsApp::ParticleSystemDraw()
 		vec3(cos(getTime()), 0, 0) * 0.1f);
 
 	m_emitter->UpdatePosition(m_particleEmitTransform[3]);
+
+	auto pv = GetActiveScene()->GetCamera()->GetProjectionViewMatrix();
 	
 	m_particleShader.bind();
 	m_particleShader.bindUniform("ProjectionViewModel",
-		m_camera->GetProjectionViewMatrix() * m_particleEmitTransform);
+		pv * m_particleEmitTransform);
 	m_emitter->Draw();
 }

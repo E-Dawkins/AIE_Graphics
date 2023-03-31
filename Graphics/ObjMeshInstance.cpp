@@ -38,8 +38,8 @@ void ObjMeshInstance::Draw(Scene* _scene)
         _scene->GetPointLightColors());
     
     m_shader->bindUniform("CameraPosition", _scene->GetCamera()->GetPosition());
-    m_shader->bindUniform("LightDirection", _scene->GetLight().direction);
-    m_shader->bindUniform("LightColor", _scene->GetLight().color);
+    m_shader->bindUniform("LightDirection", _scene->GetSunLight().direction);
+    m_shader->bindUniform("LightColor", _scene->GetSunLight().color);
     m_shader->bindUniform("AmbientColor", _scene->GetAmbientLightColor());
 
     m_objMesh->draw();

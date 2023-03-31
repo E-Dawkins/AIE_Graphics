@@ -35,7 +35,7 @@ struct PostProcessing
     
     aie::ShaderProgram  shader;
     Mesh                screenQuad;
-    int                 currentEffect = effects[0].second;
+    int                 effectIndex = 0;
 };
 
 class BaseCamera
@@ -47,9 +47,9 @@ public:
     virtual void Update(float _dt) {}
     
     void PostProcessDraw(aie::RenderTarget& _renderTarget);
-    void CameraImGui();
 
     // Getters
+    PostProcessing& GetPostProcessing();
     vec3 GetPosition();
     mat4 GetRotation();
     vec3 GetScale();

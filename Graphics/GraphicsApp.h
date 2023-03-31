@@ -51,8 +51,6 @@ public:
 	void ParticleSystemDraw();
 	
 protected:
-	BaseCamera*				m_camera;
-	
 	int						m_sceneIndex = 0;
 	std::vector<Scene*>		m_scenes;
 

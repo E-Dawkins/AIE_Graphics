@@ -35,53 +35,56 @@ struct Light
 class Scene
 {
 public:
-    Scene(char* _sceneName, BaseCamera& _camera, glm::vec2 _windowSize,
-        Light& _light, glm::vec3 _ambientLightColor);
+    Scene(char* _sceneName, BaseCamera* _camera, vec2 _windowSize,
+        Light& _light, vec3 _ambientLightColor);
     ~Scene();
     
-    void AddInstance(Instance* _instance);
     void Draw();
-    void AddPointLights(Light& _light)
+    void AddInstance(Instance* _instance)
+    {
+        m_instances.push_back(_instance);
+    }
+    void AddPointLight(Light& _light)
     {
         m_pointLights.push_back(_light);
     }
-    void AddPointLights(glm::vec3 _direction, glm::vec3 _color, float _intensity)
+    void AddPointLight(vec3 _direction, vec3 _color, float _intensity)
     {
         m_pointLights.push_back(Light(_direction, _color, _intensity));
     }
-    void ImGuiRefresher()
+    void AddCamera(BaseCamera* _camera)
     {
-        m_camera->CameraImGui();
-        m_delegate();
+        m_cameras.push_back(_camera);
     }
 
+    void ImGuiRefresher();
     void SetImGuiFunction(std::function<void()> _delegate) { m_delegate = _delegate; }
 
     char* GetSceneName()                    { return m_sceneName; }
-    BaseCamera* GetCamera()                 { return m_camera; }
+    BaseCamera*& GetCamera()                { return m_cameras[m_activeCamera]; }
     glm::vec2 GetWindowSize()               { return m_windowSize; }
     glm::vec3& GetAmbientLightColor()       { return m_ambientLightColor; }
-    Light& GetLight()                       { return m_light; }
+    Light& GetSunLight()                    { return m_sunLight; }
     std::vector<Light>& GetPointLights()    { return m_pointLights; }
     int GetNumberOfLights()                 { return m_pointLights.size(); }
     glm::vec3* GetPointLightPositions()     { return &m_pointLightPositions[0]; }
     glm::vec3* GetPointLightColors()        { return &m_pointLightColors[0]; }
     
 protected:
-    char*                   m_sceneName;
+    char*                       m_sceneName;
+    vec2                        m_windowSize;
+
+    int                         m_activeCamera;
+    std::vector<BaseCamera*>    m_cameras;
+
+    Light                       m_sunLight;
+    std::vector<Light>          m_pointLights;
     
-    BaseCamera*             m_camera;
-    glm::vec2               m_windowSize;
+    glm::vec3                   m_ambientLightColor;
+    std::list<Instance*>        m_instances;
 
-    Light                   m_sunLight;
-    std::vector<Light>      m_pointLights;
-    
-    Light                   m_light;
-    glm::vec3               m_ambientLightColor;
-    std::list<Instance*>    m_instances;
+    glm::vec3                   m_pointLightPositions[MAX_LIGHTS];
+    glm::vec3                   m_pointLightColors[MAX_LIGHTS];
 
-    glm::vec3 m_pointLightPositions[MAX_LIGHTS];
-    glm::vec3 m_pointLightColors[MAX_LIGHTS];
-
-    std::function<void()> m_delegate;
+    std::function<void()>       m_delegate;
 };

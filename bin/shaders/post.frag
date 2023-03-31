@@ -5,7 +5,7 @@ in vec2 vTexCoord;
 uniform sampler2D colorTarget;
 uniform sampler2D depthTarget;
 
-uniform int postProcessTarget;
+uniform int postProcessEffect;
 uniform int windowWidth;
 uniform int windowHeight;
 uniform float time;
@@ -236,7 +236,7 @@ void main()
     vec2 scale = (texSize - texelSize) / texSize;
     vec2 texCoord = vTexCoord / scale + texelSize * 0.5f;
     
-    switch(postProcessTarget)
+    switch(postProcessEffect)
     {
         default: // Default
         {
