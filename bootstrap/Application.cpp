@@ -67,61 +67,63 @@ void Application::destroyWindow() {
 void Application::run(const char* title, int width, int height, bool fullscreen) {
 
 	// start game loop if successfully initialised
-	if (createWindow(title,width,height, fullscreen) &&
-		startup()) {
+	if (createWindow(title,width,height, fullscreen))
+	{
+		if (startup())
+		{
+			// variables for timing
+			double prevTime = glfwGetTime();
+			double currTime = 0;
+			double deltaTime = 0;
+			unsigned int frames = 0;
+			double fpsInterval = 0;
 
-		// variables for timing
-		double prevTime = glfwGetTime();
-		double currTime = 0;
-		double deltaTime = 0;
-		unsigned int frames = 0;
-		double fpsInterval = 0;
+			// loop while game is running
+			while (!m_gameOver) {
 
-		// loop while game is running
-		while (!m_gameOver) {
+				// update delta time
+				currTime = glfwGetTime();
+				deltaTime = currTime - prevTime;
+				if (deltaTime > 0.1f)
+					deltaTime = 0.1f;
 
-			// update delta time
-			currTime = glfwGetTime();
-			deltaTime = currTime - prevTime;
-			if (deltaTime > 0.1f)
-				deltaTime = 0.1f;
+				prevTime = currTime;
 
-			prevTime = currTime;
+				// clear input
+				Input::getInstance()->clearStatus();
 
-			// clear input
-			Input::getInstance()->clearStatus();
+				// update window events (input etc)
+				glfwPollEvents();
 
-			// update window events (input etc)
-			glfwPollEvents();
+				// skip if minimised
+				if (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED) != 0)
+					continue;
 
-			// skip if minimised
-			if (glfwGetWindowAttrib(m_window, GLFW_ICONIFIED) != 0)
-				continue;
+				// update fps every second
+				frames++;
+				fpsInterval += deltaTime;
+				if (fpsInterval >= 1.0f) {
+					m_fps = frames;
+					frames = 0;
+					fpsInterval -= 1.0f;
+				}
 
-			// update fps every second
-			frames++;
-			fpsInterval += deltaTime;
-			if (fpsInterval >= 1.0f) {
-				m_fps = frames;
-				frames = 0;
-				fpsInterval -= 1.0f;
+				// clear imgui
+				ImGui_NewFrame();
+
+				update(float(deltaTime));
+
+				draw();
+
+				// draw IMGUI last
+				ImGui::Render();
+
+				//present backbuffer to the monitor
+				glfwSwapBuffers(m_window);
+
+				// should the game exit?
+				m_gameOver = m_gameOver || glfwWindowShouldClose(m_window) == GLFW_TRUE;
 			}
-
-			// clear imgui
-			ImGui_NewFrame();
-
-			update(float(deltaTime));
-
-			draw();
-
-			// draw IMGUI last
-			ImGui::Render();
-
-			//present backbuffer to the monitor
-			glfwSwapBuffers(m_window);
-
-			// should the game exit?
-			m_gameOver = m_gameOver || glfwWindowShouldClose(m_window) == GLFW_TRUE;
 		}
 	}
 

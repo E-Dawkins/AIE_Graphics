@@ -5,7 +5,7 @@
 #include "Instance.h"
 #include "FlyCamera.h"
 
-Scene::Scene(char* _sceneName, FlyCamera& _camera, vec2 _windowSize, Light& _light, vec3 _ambientLightColor)
+Scene::Scene(char* _sceneName, BaseCamera& _camera, vec2 _windowSize, Light& _light, vec3 _ambientLightColor)
 {
     m_sceneName = _sceneName;
     m_camera = &_camera;

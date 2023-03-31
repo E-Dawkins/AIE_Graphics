@@ -15,10 +15,7 @@ class Instance
 {
 public:
     Instance() = default;
-    virtual ~Instance()
-    {
-        delete m_shader;
-    }
+    virtual ~Instance() = default;
     
     virtual void Draw(Scene* _scene) {}
 

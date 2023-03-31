@@ -38,6 +38,9 @@ void GraphicsApp::shutdown()
 	{
 		delete* it;
 	}
+
+	delete m_camera;
+	delete m_emitter;
 }
 
 void GraphicsApp::update(float deltaTime)
@@ -45,7 +48,7 @@ void GraphicsApp::update(float deltaTime)
 	// wipe the gizmos clean for this frame
 	Gizmos::clear();
 
-	m_camera.Update(deltaTime);
+	m_camera->Update(deltaTime);
 
 	// quit if we press escape
 	aie::Input* input = aie::Input::getInstance();
@@ -53,7 +56,7 @@ void GraphicsApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
-	m_emitter->Update(deltaTime, m_camera.GetTransform());
+	m_emitter->Update(deltaTime, m_camera->GetTransform());
 
 	ImGuiRefresher();
 }
@@ -67,7 +70,7 @@ void GraphicsApp::draw()
 	// Main render ('draw') loop
 	ParticleSystemDraw();
 	GetActiveScene()->Draw();
-	Gizmos::draw(m_camera.GetProjectionViewMatrix());
+	Gizmos::draw(m_camera->GetProjectionViewMatrix());
 
 	// Unbind the target to return to the backbuffer, then re-clear the screen
 	m_renderTarget.unbind();
@@ -79,9 +82,8 @@ void GraphicsApp::draw()
 
 bool GraphicsApp::LaunchScenes()
 {
-	m_camera = FlyCamera();
-	m_camera.SetPosition(vec3(0, 1, -3));
-	m_camera.PostProcessLoad();
+	m_camera = new FlyCamera();
+	m_camera->SetPosition(vec3(0, 1, -3));
 
 	if (!LoadParticleSystem())
 		return false;
@@ -104,7 +106,7 @@ bool GraphicsApp::LoadModelScene()
 	Light light = Light(vec3(1, -1, 1), vec3(1), 1.f);
 	vec3 ambientLight = vec3(0.5f);
 	
-	m_scenes.push_back(new Scene("Models", m_camera, vec2(getWindowWidth(),
+	m_scenes.push_back(new Scene("Models", *m_camera, vec2(getWindowWidth(),
 		getWindowHeight()), light, ambientLight));
 
 	m_scenes.back()->SetImGuiFunction([this] { ImGuiModels(); });
@@ -135,7 +137,7 @@ bool GraphicsApp::LoadPrimitiveScene()
 	Light light = Light(vec3(1, -1, 1), vec3(1), 1.f);
 	vec3 ambientLight = vec3(0.5f);
 	
-	m_scenes.push_back(new Scene("Primitives", m_camera, vec2(getWindowWidth(),
+	m_scenes.push_back(new Scene("Primitives", *m_camera, vec2(getWindowWidth(),
 		getWindowHeight()), light, ambientLight));
 
 	m_scenes.back()->SetImGuiFunction([this] { ImGuiPrimitive(); });
@@ -188,37 +190,6 @@ void GraphicsApp::ImGuiRefresher()
 	
 	ImGui::End();
 
-	/* --- Camera Settings --- */
-	
-	ImGui::Begin("Camera Settings");
-
-	float tempSens = glm::degrees(m_camera.GetSensitivity());
-	ImGui::DragFloat("Sensitivity", &tempSens, 1.f, 5.f, 180.f);
-	m_camera.SetSensitivity(glm::radians(tempSens));
-	
-	ImGui::End();
-
-	/* --- Post Processing --- */
-	
-	ImGui::Begin("Post Processing");
-	
-	items.clear();
-
-	auto& postProcessing = GetActiveScene()->GetCamera()->GetPostProcessing();
-	auto effects = postProcessing.effects;
-	
-	for (auto effect : effects)
-		items.push_back(effect.first);
-
-	ImGui::PushItemWidth(-1);
-
-	static int itemIndex = 0;
-	ImGui::ListBox("", &itemIndex, items.data(), items.size(), (int)items.size());
-
-	postProcessing.currentEffect = effects[itemIndex].second;
-	
-	ImGui::End();
-
 	/* --- Scene ImGui --- */
 	
 	GetActiveScene()->ImGuiRefresher();
@@ -259,18 +230,6 @@ void GraphicsApp::ImGuiPrimitive()
 	
 }
 
-bool GraphicsApp::LoadObj(const char* _filePath, aie::OBJMesh& _mesh, bool _flipTexture)
-{
-	// Check if mesh has loaded successfully
-	if (!_mesh.load(_filePath, true, _flipTexture))
-	{
-		printf("Mesh Error! Could not load:\n\t%s", _filePath);
-		return false;
-	}
-
-	return true;
-}
-
 bool GraphicsApp::LoadShader(const char* _fileName, aie::ShaderProgram& _shader)
 {
 	std::string vertPath = "./shaders/";
@@ -297,8 +256,21 @@ bool GraphicsApp::LoadShader(const char* _fileName, aie::ShaderProgram& _shader)
 ObjModel* GraphicsApp::LoadObjModel(char* _shaderName, char* _objFilePath, bool _flipTextures)
 {
 	ObjModel* model = new ObjModel();
-	LoadShader(_shaderName, model->shader);
-	LoadObj(_objFilePath, model->mesh, _flipTextures);
+
+	// Load model shader
+	if (!LoadShader(_shaderName, model->shader))
+	{
+		printf("Shader Error!\n%s", model->shader.getLastError());
+		return nullptr;
+	}
+
+	// Check if mesh has loaded successfully
+	if (!model->mesh.load(_objFilePath, true, _flipTextures))
+	{
+		printf("Mesh Error! Could not load:\n\t%s", _objFilePath);
+		return nullptr;
+	}
+	
 	return model;
 }
 
@@ -327,6 +299,6 @@ void GraphicsApp::ParticleSystemDraw()
 	
 	m_particleShader.bind();
 	m_particleShader.bindUniform("ProjectionViewModel",
-		m_camera.GetProjectionViewMatrix() * m_particleEmitTransform);
+		m_camera->GetProjectionViewMatrix() * m_particleEmitTransform);
 	m_emitter->Draw();
 }

@@ -4,7 +4,9 @@
 #include <vector>
 #include <list>
 
-class FlyCamera;
+#include "BaseCamera.h"
+
+class BaseCamera;
 class Instance;
 
 const int MAX_LIGHTS = 4;
@@ -33,7 +35,7 @@ struct Light
 class Scene
 {
 public:
-    Scene(char* _sceneName, FlyCamera& _camera, glm::vec2 _windowSize,
+    Scene(char* _sceneName, BaseCamera& _camera, glm::vec2 _windowSize,
         Light& _light, glm::vec3 _ambientLightColor);
     ~Scene();
     
@@ -47,12 +49,16 @@ public:
     {
         m_pointLights.push_back(Light(_direction, _color, _intensity));
     }
-    void ImGuiRefresher() { m_delegate(); }
+    void ImGuiRefresher()
+    {
+        m_camera->CameraImGui();
+        m_delegate();
+    }
 
     void SetImGuiFunction(std::function<void()> _delegate) { m_delegate = _delegate; }
 
     char* GetSceneName()                    { return m_sceneName; }
-    FlyCamera* GetCamera()               { return m_camera; }
+    BaseCamera* GetCamera()                 { return m_camera; }
     glm::vec2 GetWindowSize()               { return m_windowSize; }
     glm::vec3& GetAmbientLightColor()       { return m_ambientLightColor; }
     Light& GetLight()                       { return m_light; }
@@ -64,7 +70,7 @@ public:
 protected:
     char*                   m_sceneName;
     
-    FlyCamera*           m_camera;
+    BaseCamera*             m_camera;
     glm::vec2               m_windowSize;
 
     Light                   m_sunLight;

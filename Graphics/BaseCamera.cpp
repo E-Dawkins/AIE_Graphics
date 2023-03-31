@@ -7,13 +7,11 @@ BaseCamera::BaseCamera()
     m_projectionViewTransform = mat4(1);
     m_worldTransform = mat4(1);
     m_viewTransform = mat4(1);
+    
     m_aspectRatio = 16.f / 9.f;
-
     m_sensitivity = glm::radians(15.f);
-}
 
-void BaseCamera::PostProcessLoad()
-{
+    // Initialise post processing shader & quad
     m_postProcessing.shader.loadShader(aie::eShaderStage::VERTEX, "./shaders/post.vert");
     m_postProcessing.shader.loadShader(aie::eShaderStage::FRAGMENT, "./shaders/post.frag");
 
@@ -39,6 +37,37 @@ void BaseCamera::PostProcessDraw(aie::RenderTarget& _renderTarget)
     _renderTarget.bindDepthTarget(1);
 
     m_postProcessing.screenQuad.Draw();
+}
+
+void BaseCamera::CameraImGui()
+{
+    /* --- Camera Settings --- */
+	
+    ImGui::Begin("Camera Settings");
+
+    float tempSens = glm::degrees(GetSensitivity());
+    ImGui::DragFloat("Sensitivity", &tempSens, 1.f, 5.f, 180.f);
+    SetSensitivity(glm::radians(tempSens));
+	
+    ImGui::End();
+
+    /* --- Post Processing --- */
+	
+    ImGui::Begin("Post Processing");
+	
+    std::vector<const char*> items;
+	
+    for (auto effect : m_postProcessing.effects)
+        items.push_back(effect.first);
+
+    ImGui::PushItemWidth(-1);
+
+    static int itemIndex = 0;
+    ImGui::ListBox("", &itemIndex, items.data(), items.size(), (int)items.size());
+
+    m_postProcessing.currentEffect = m_postProcessing.effects[itemIndex].second;
+	
+    ImGui::End();
 }
 
 vec3 BaseCamera::GetPosition()
@@ -129,11 +158,6 @@ float BaseCamera::GetSensitivity()
 mat4 BaseCamera::GetTransform()
 {
     return m_worldTransform;
-}
-
-PostProcessing& BaseCamera::GetPostProcessing()
-{
-    return m_postProcessing;
 }
 
 void BaseCamera::SetPosition(vec3 _position)

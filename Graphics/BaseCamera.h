@@ -45,9 +45,9 @@ public:
     virtual ~BaseCamera() = default;
 
     virtual void Update(float _dt) {}
-
-    void PostProcessLoad();
+    
     void PostProcessDraw(aie::RenderTarget& _renderTarget);
+    void CameraImGui();
 
     // Getters
     vec3 GetPosition();
@@ -63,7 +63,6 @@ public:
     float GetAspectRatio();
     float GetSensitivity();
     mat4 GetTransform();
-    PostProcessing& GetPostProcessing();
     
     // Setters
     void SetPosition(vec3 _position);
@@ -82,6 +81,6 @@ protected:
     float m_sensitivity;
     float m_aspectRatio;
     
-    PostProcessing m_postProcessing = PostProcessing();
+    PostProcessing m_postProcessing;
 };
 

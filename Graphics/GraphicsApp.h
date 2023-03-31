@@ -44,7 +44,6 @@ public:
 	void ImGuiModels();
 	void ImGuiPrimitive();
 	
-	static bool LoadObj(const char* _filePath, aie::OBJMesh& _mesh, bool _flipTexture);
 	static bool LoadShader(const char *_fileName, aie::ShaderProgram& _shader);
 	ObjModel* LoadObjModel(char* _shaderName, char* _objFilePath, bool _flipTextures);
 
@@ -52,7 +51,7 @@ public:
 	void ParticleSystemDraw();
 	
 protected:
-	FlyCamera			m_camera;
+	BaseCamera*				m_camera;
 	
 	int						m_sceneIndex = 0;
 	std::vector<Scene*>		m_scenes;
