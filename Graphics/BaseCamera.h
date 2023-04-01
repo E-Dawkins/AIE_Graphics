@@ -51,7 +51,7 @@ public:
     // Getters
     PostProcessing& GetPostProcessing();
     vec3 GetPosition();
-    mat4 GetRotation();
+    mat4 GetRotationMatrix();
     vec3 GetScale();
     vec3 GetRight(mat4 _transform);
     vec3 GetUp(mat4 _transform);

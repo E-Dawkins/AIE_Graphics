@@ -33,6 +33,16 @@ Scene::~Scene()
 
 void Scene::Draw()
 {
+    // Draw cylinders for each camera
+    for (auto cam : m_cameras)
+    {
+        if (cam != GetCamera()) // don't draw gizmo for active cam
+        {
+            aie::Gizmos::addCylinderFilled(cam->GetPosition(),
+                0.1f, 0.15f, 10, vec4(0, 1, 0, 1));
+        }
+    }
+    
     for (int i = 0; i < MAX_LIGHTS && i < m_pointLights.size(); i++)
     {
         m_pointLightPositions[i] = m_pointLights[i].direction;

@@ -50,7 +50,7 @@ vec3 BaseCamera::GetPosition()
     return m_worldTransform[3];
 }
 
-mat4 BaseCamera::GetRotation()
+mat4 BaseCamera::GetRotationMatrix()
 {
     vec3 scale = GetScale();
 
@@ -59,7 +59,7 @@ mat4 BaseCamera::GetRotation()
         m_worldTransform[0] / scale.x,
         m_worldTransform[1] / scale.y,
         m_worldTransform[2] / scale.z,
-        m_worldTransform[3]
+        vec4(0, 0, 0, 1)
     };
 
     return rotation;
