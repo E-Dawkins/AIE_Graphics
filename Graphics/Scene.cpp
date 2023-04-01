@@ -44,7 +44,9 @@ void Scene::Draw()
     for (auto it = m_instances.begin(); it != m_instances.end(); it++)
     {
         Instance* instance = *it;
-        instance->Draw(this);
+
+        if (instance->isActive)
+            instance->Draw(this);
     }
 }
 
@@ -83,6 +85,33 @@ void Scene::ImGuiRefresher()
     ImGui::ListBox(activeCam.c_str(), &GetCamera()->GetPostProcessing().effectIndex,
         items.data(), items.size(), (int)items.size());
 	
+    ImGui::End();
+
+    /* --- Instance Transforms --- */
+
+    ImGui::Begin("Instance Settings");
+
+    for (int i = 0; i < m_instances.size(); i++)
+    {
+        std::string iString = std::to_string(i);
+        
+        if (ImGui::CollapsingHeader(iString.c_str()))
+        {
+            // Position
+            ImGui::DragFloat3((iString + " : Position").c_str(),
+                &m_instances[i]->GetTransform()[3][0], 0.05f);
+
+            // Scale
+            vec3 newScale = m_instances[i]->GetScale();
+            ImGui::DragFloat3((iString + " : Scale").c_str(),
+                &newScale[0], 0.05f);
+            m_instances[i]->SetScale(newScale);
+
+            // Is Active
+            ImGui::Checkbox((iString + " : Enabled").c_str(), &m_instances[i]->isActive);
+        }
+    }
+    
     ImGui::End();
 
     /* ImGui Delegate */

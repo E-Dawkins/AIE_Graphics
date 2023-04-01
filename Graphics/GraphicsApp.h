@@ -53,8 +53,6 @@ public:
 protected:
 	int						m_sceneIndex = 0;
 	std::vector<Scene*>		m_scenes;
-
-	std::vector<ObjModel>	m_models;
 	
 	aie::RenderTarget		m_renderTarget;
 

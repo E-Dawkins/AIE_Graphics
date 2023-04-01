@@ -2,7 +2,6 @@
 #include <functional>
 #include <glm/glm.hpp>
 #include <vector>
-#include <list>
 
 #include "BaseCamera.h"
 
@@ -81,10 +80,11 @@ protected:
     std::vector<Light>          m_pointLights;
     
     glm::vec3                   m_ambientLightColor;
-    std::list<Instance*>        m_instances;
+    std::vector<Instance*>      m_instances;
 
     glm::vec3                   m_pointLightPositions[MAX_LIGHTS];
     glm::vec3                   m_pointLightColors[MAX_LIGHTS];
 
+    // ImGui stuff
     std::function<void()>       m_delegate;
 };
