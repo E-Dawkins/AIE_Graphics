@@ -226,6 +226,22 @@ vec4 Vignette(vec2 _texCoord)
     else return texture(colorTarget, _texCoord);
 }
 
+vec4 ChromaticAberration(vec2 _texCoord)
+{
+    float chrAb = 0.02f;
+    float d = distance(_texCoord, vec2(0.5));
+    chrAb *= d;
+
+    vec4 origColor = texture(colorTarget, _texCoord);
+    
+    vec4 chrAbColor = vec4( texture(colorTarget, _texCoord + vec2(chrAb, 0)).r,
+                            texture(colorTarget, _texCoord).g,
+                            texture(colorTarget, _texCoord + vec2(0, chrAb)).b,
+                            1.0 );
+
+    return mix(origColor, chrAbColor, d);
+}
+
 void main()
 {
     // This will calculate the texel size
@@ -307,6 +323,11 @@ void main()
         case 12: // Vignette
         {
             FragColor = Vignette(texCoord);
+            break;
+        }
+        case 13:
+        {
+            FragColor = ChromaticAberration(texCoord);
             break;
         }
     }

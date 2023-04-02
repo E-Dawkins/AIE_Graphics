@@ -17,20 +17,21 @@ struct PostProcessing
 {
     std::vector<std::pair<const char*, int>> effects =
     {
-        {"Default",			-1},
-        {"Box Blur",		0},
-        {"Gaussian Blur",	1},
-        {"Distort",			2},
-        {"Edge Detection",	3},
-        {"Sepia",			4},
-        {"Scanlines",		5},
-        {"Grayscale",		6},
-        {"Invert",			7},
-        {"Pixelization",	8},
-        {"Posterization",	9},
-        {"Distance Fog",	10},
-        {"Depth of Field",	11},
-        {"Vignette",		12}
+        {"Default",			        -1},
+        {"Box Blur",		        0},
+        {"Gaussian Blur",	        1},
+        {"Distort",			        2},
+        {"Edge Detection",	        3},
+        {"Sepia",			        4},
+        {"Scanlines",		        5},
+        {"Grayscale",		        6},
+        {"Invert",			        7},
+        {"Pixelization",	        8},
+        {"Posterization",	        9},
+        {"Distance Fog",	        10},
+        {"Depth of Field",	        11},
+        {"Vignette",		        12},
+        {"Chromatic Aberration",    13}
     };
     
     aie::ShaderProgram  shader;
