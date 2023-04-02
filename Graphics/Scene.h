@@ -14,20 +14,20 @@ struct Light
 {
     Light()
     {
-        direction = glm::vec3(0);
-        color = glm::vec3(1);
+        direction = vec3(0);
+        color = vec3(1);
         intensity = 1;
     }
     
-    Light(glm::vec3 _direction, glm::vec3 _color, float _intensity)
+    Light(vec3 _direction, vec3 _color, float _intensity)
     {
         direction = _direction;
         color = _color * _intensity;
         intensity = _intensity;
     }
 
-    glm::vec3 direction;
-    glm::vec3 color;
+    vec3 direction;
+    vec3 color;
     float intensity;
 };
 

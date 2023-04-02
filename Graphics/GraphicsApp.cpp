@@ -56,6 +56,19 @@ void GraphicsApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
+	// figure 8 for first point light in scene
+	std::vector<Light>& pLights = GetActiveScene()->GetPointLights();
+
+	if (!pLights.empty())
+	{
+		vec3 oldPos = pLights[0].direction;
+
+		float newX = cos(getTime());
+		float newZ = sin(2.f * getTime());
+
+		pLights[0].direction = vec3(newX, oldPos.y, newZ);
+	}
+		
 	m_emitter->Update(deltaTime, GetActiveScene()->GetCamera()->GetTransform());
 
 	ImGuiRefresher();
@@ -119,7 +132,8 @@ bool GraphicsApp::LoadModelScene()
 	m_scenes.back()->AddCamera(statCam1);
 
 	// Add point lights, at position with color and intensity
-	m_scenes.back()->AddPointLight(vec3(1, 1, 0), vec3(1, 0, 0), 10);
+	m_scenes.back()->AddPointLight(vec3( 1, 2, 0), vec3(0, 1, 0), 1);
+	m_scenes.back()->AddPointLight(vec3( 1, 1, 0), vec3(1, 0, 0), 10);
 	m_scenes.back()->AddPointLight(vec3(-1, 1, 0), vec3(0, 0, 1), 10);
 
 	// Load models
