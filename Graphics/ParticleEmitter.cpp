@@ -1,5 +1,7 @@
 #include "ParticleEmitter.h"
 
+#include <imgui.h>
+
 ParticleEmitter::ParticleEmitter() :
     m_particles(nullptr), m_firstDead(0), m_maxParticles(0), m_vao(0),
     m_vbo(0), m_ibo(0), m_vertexData(nullptr), m_position(0, 0, 0)
@@ -105,6 +107,9 @@ void ParticleEmitter::Initialise(unsigned int _maxParticles, unsigned int _emitR
 
 void ParticleEmitter::Emit()
 {
+    if (!isActive)
+        return;
+    
     // Check if there are any available particles for the system to emit
     if (m_firstDead >= m_maxParticles)
         return;
@@ -139,6 +144,9 @@ void ParticleEmitter::Emit()
 
 void ParticleEmitter::Update(float _dt, const glm::mat4& _cameraTransform)
 {
+    if (!isActive)
+        return;
+    
     // This will move and update all of the alive particles.
     // Then it will remove the dead particles.
     // It will then emit the particles based on the emitter's provided rate.
@@ -222,10 +230,64 @@ void ParticleEmitter::Update(float _dt, const glm::mat4& _cameraTransform)
 
 void ParticleEmitter::Draw()
 {
+    // Draw imgui
+    PSystemImGui();
+    
+    if (!isActive)
+        return;
+    
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferSubData(GL_ARRAY_BUFFER, 0, m_firstDead * 4 *
         sizeof(ParticleVertex), m_vertexData);
     glBindVertexArray(m_vao);
 
     glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
+}
+
+void ParticleEmitter::PSystemImGui()
+{
+    ImGui::Begin("Particle System");
+
+    ImGui::Checkbox("Emitter Enabled", &isActive);
+
+    if (isActive)
+    {
+        ImGui::Indent();
+        
+        // Position
+        ImGui::DragFloat3("Emitter Position", &m_position[0], 0.05f);
+
+        // Emit rate - delay between particle emission
+        ImGui::DragFloat("Emit Delay", &m_emitRate);
+        
+        // Lifespan - minimum / maximum lifespan of each particle
+        ImGui::DragFloat("Lifespan Min", &m_lifespanMin);
+        ImGui::DragFloat("Lifespan Max", &m_lifespanMax);
+
+        // Velocity - minimum / maximum velocity of each particle
+        ImGui::DragFloat("Velocity Min", &m_velocityMin);
+        ImGui::DragFloat("Velocity Max", &m_velocityMax);
+
+        // Size - start / end size of each particle over its lifetime
+        ImGui::DragFloat("Start Size", &m_startSize);
+        ImGui::DragFloat("End Size", &m_endSize);
+
+        // Color - start / end color of each particle over its lifetime
+        ImGui::ColorEdit4("Start Color", &m_startColor[0]);
+        ImGui::ColorEdit4("End Color", &m_endColor[0]);
+
+        // Gravity - is gravity enabled? What direction is the gravity?
+        ImGui::Checkbox("Gravity Enabled", &m_hasGravity);
+
+        if (m_hasGravity)
+        {
+            ImGui::Indent();
+            ImGui::DragFloat3("Gravity Direction", &m_gravity[0], 0.01f);
+            ImGui::Unindent();
+        }
+
+        ImGui::Unindent();
+    }
+    
+    ImGui::End();
 }

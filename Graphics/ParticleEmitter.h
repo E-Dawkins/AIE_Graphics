@@ -37,6 +37,7 @@ public:
     void Emit();
     void Update(float _dt, const glm::mat4& _cameraTransform);
     void Draw();
+    void PSystemImGui();
 
     void UpdatePosition(glm::vec3 _position)
     {
@@ -48,6 +49,8 @@ public:
         m_hasGravity = _hasGravity;
         m_gravity = _gravity;
     }
+
+    bool isActive = true;
 
 protected:
     Particle*           m_particles;
