@@ -38,14 +38,14 @@ vec4 BoxBlur(vec2 _texCoord)
 
 vec4 GaussianBlur(vec2 _texCoord)
 {
-    float k[25] = 
-    {
+    float k[25] = float[25]
+    (
         1,  4,  6,  4, 1,
         4, 16, 24, 16, 4,
         6, 24, 36, 24, 6,
         4, 16, 24, 16, 4,
         1,  4,  6,  4, 1
-    };
+    );
     
     vec4 color = texture(colorTarget, _texCoord);
     
