@@ -30,8 +30,10 @@ void BaseCamera::PostProcessDraw(aie::RenderTarget& _renderTarget)
     
     m_postProcessing.shader.bindUniform("postProcessEffect",
         m_postProcessing.effects[m_postProcessing.effectIndex].second);
-    m_postProcessing.shader.bindUniform("windowWidth", (int)ImGui::GetWindowWidth());
-    m_postProcessing.shader.bindUniform("windowHeight", (int)ImGui::GetWindowHeight());
+    
+    m_postProcessing.shader.bindUniform("windowWidth", ImGui::GetWindowWidth());
+    m_postProcessing.shader.bindUniform("windowHeight", ImGui::GetWindowHeight());
+    m_postProcessing.shader.bindUniform("aspectRatio", m_aspectRatio);
     m_postProcessing.shader.bindUniform("time", ImGui::GetTime());
 
     _renderTarget.getTarget(0).bind(0);

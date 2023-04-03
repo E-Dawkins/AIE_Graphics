@@ -6,9 +6,10 @@ uniform sampler2D colorTarget;
 uniform sampler2D depthTarget;
 
 uniform int postProcessEffect;
-uniform int windowWidth;
-uniform int windowHeight;
+uniform float windowWidth;
+uniform float windowHeight;
 uniform float time;
+uniform float aspectRatio;
 
 out vec4 FragColor;
 
@@ -242,6 +243,33 @@ vec4 ChromaticAberration(vec2 _texCoord)
     return mix(origColor, chrAbColor, d);
 }
 
+vec4 Donut(vec2 _texCoord)
+{
+    vec4 color = texture(colorTarget, _texCoord);
+    
+    vec2 windowSize = vec2(windowWidth, windowHeight);
+    vec2 pixelCoordinate = (_texCoord * 2 - 1) * (0.5 * windowSize);
+    
+    pixelCoordinate.y /= aspectRatio;
+    
+    float d = distance(pixelCoordinate, vec2(0));
+    float radius = abs(sin(time)) * length(windowSize * 0.5);
+    
+    float borderThickness = radius / 50;
+    
+    // Circle
+    if (d < radius / 3) {}
+    else if (d < radius)
+        color *= vec4(0.8, 0.2, 0.8, 1);
+    
+    // White border
+    if ((d > radius && d < radius + borderThickness) ||
+        (d > radius / 3 && d < radius / 3 + borderThickness))
+        color = vec4(1);
+    
+    return color;
+}
+
 void main()
 {
     // This will calculate the texel size
@@ -328,6 +356,11 @@ void main()
         case 13:
         {
             FragColor = ChromaticAberration(texCoord);
+            break;
+        }
+        case 14:
+        {
+            FragColor = Donut(texCoord);
             break;
         }
     }

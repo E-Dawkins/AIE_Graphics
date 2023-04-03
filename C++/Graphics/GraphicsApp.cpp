@@ -16,6 +16,7 @@
 #include "MeshInstance.h"
 #include "ObjMeshInstance.h"
 #include "StationaryCamera.h"
+#include "../dependencies/glfw/include/GLFW/glfw3.h"
 
 using aie::Gizmos;
 

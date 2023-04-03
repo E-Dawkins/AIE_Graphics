@@ -31,7 +31,8 @@ struct PostProcessing
         {"Distance Fog",	        10},
         {"Depth of Field",	        11},
         {"Vignette",		        12},
-        {"Chromatic Aberration",    13}
+        {"Chromatic Aberration",    13},
+        {"Donut",                   14}
     };
     
     aie::ShaderProgram  shader;
