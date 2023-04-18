@@ -2,8 +2,11 @@
 {
 	Properties
     {
-        _HeightOffset ("HeightOffset", Float) = 1
     	_Color ("Color", Color) = (1, 1, 1, 1)
+    	
+    	[Header(Height)]
+        _HeightOffset ("HeightOffset", Float) = 1
+    	_HeightMap ("Height Map", 2D) = "black" {}
     }
 	SubShader
 	{
@@ -23,21 +26,16 @@
 				float4 worldPos : TEXCOORD0;
 			};
 
+			sampler2D _HeightMap;
 			float _HeightOffset;
 			fixed4 _Color;
-
-			// From NedMakesGames yt - https://www.youtube.com/watch?v=nohGiVNWhJE
-			float Noise(float2 uv)
-			{
-				return frac(sin(dot(uv, float2(12.9898f, 78.233f))) * 43758.5453f);
-			}
 			
 			v2f vert (appdata_base v)
 			{
 				v2f o;
 				
 				float3 worldNormal = UnityObjectToWorldNormal(v.normal);
-				float vertHeight = Noise(v.texcoord.xy) * _HeightOffset;
+				float vertHeight = tex2Dlod(_HeightMap, v.texcoord) * _HeightOffset;
 				
                 o.pos = UnityObjectToClipPos(v.vertex + worldNormal * vertHeight);
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex); // object -> world space
