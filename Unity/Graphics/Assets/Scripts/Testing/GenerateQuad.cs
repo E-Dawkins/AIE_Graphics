@@ -1,6 +1,4 @@
 using System.Linq;
-
-using Unity.Mathematics;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]

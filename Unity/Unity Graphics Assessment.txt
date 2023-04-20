@@ -1,0 +1,11 @@
+Unity Graphics Assessment
+
+Requirements:
+ - Player animations
+   - Controlled by player input
+
+ - Custom materials
+   - Custom shaders...i think?
+
+ - GUI interfaces
+   - Affects the 3d environment

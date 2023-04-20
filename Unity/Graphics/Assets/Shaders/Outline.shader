@@ -4,7 +4,7 @@ Shader "Custom/Outline"
     {
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _DeltaX ("Delta X", Float) = 0.01
-        _DeltaY ("Delta X", Float) = 0.01
+        _DeltaY ("Delta Y", Float) = 0.01
     }
     SubShader
     {
