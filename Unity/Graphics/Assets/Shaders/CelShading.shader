@@ -4,21 +4,35 @@ Shader "Custom/CelShading"
     {
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
+        
+        [Header(CelShading)]
         _Smoothness ("Band Smoothing", Float) = 5
         _Specular ("Specular", Float) = 400
+        
+        [Header(Outline)]
+        _OutlineWidth ("Outline Width", Float) = 0.01
+        _OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
     }
     SubShader
     {
         Tags { "RenderType"="Opaque" }
         LOD 200
 
+        Stencil
+        {
+            Ref 1
+            Pass replace
+            Fail keep
+            ZFail keep
+        }
+        
         CGPROGRAM
         // Surface shader uses out own LightingCel function to determine lighting
         #pragma surface surf Cel
 
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
-
+        
         struct Input
         {
             float2 uv_MainTex;
@@ -59,6 +73,54 @@ Shader "Custom/CelShading"
             o.Alpha = c.a;
         }
         ENDCG
+        
+        Pass
+        {
+            Stencil
+            {
+                Ref 1
+                Comp notequal
+            }
+            
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            #include "UnityCG.cginc"
+
+            float _OutlineWidth;
+            float4 _OutlineColor;
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float3 normal : NORMAL;
+            };
+
+            struct v2f
+            {
+                float4 vertex : SV_POSITION;
+            };
+
+            v2f vert(appdata v)
+            {
+                v2f o;
+
+                float3 normal = normalize(v.normal) * _OutlineWidth;
+                float3 pos = v.vertex + normal;
+
+                o.vertex = UnityObjectToClipPos(pos);
+
+                return o;
+            }
+
+            float4 frag(v2f i) : SV_Target
+            {
+                return _OutlineColor;
+            }
+            
+            ENDCG
+        }
     }
     FallBack "Diffuse"
 }
