@@ -41,8 +41,6 @@ Shader "Custom/Blur"
         
         Pass
         {
-            Name "Box Blur Pass"
-            
             CGPROGRAM
             sampler2D _ScreenTexture;
             float4 _ScreenTexture_TexelSize;

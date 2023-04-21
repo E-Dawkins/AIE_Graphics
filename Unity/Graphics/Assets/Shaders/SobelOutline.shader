@@ -1,4 +1,4 @@
-Shader "Custom/Outline"
+Shader "Custom/SobelOutline"
 {
     Properties
     {
@@ -14,11 +14,18 @@ Shader "Custom/Outline"
             CGINCLUDE
             #include "UnityCG.cginc"
 
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                float4 vertex : SV_POSITION;
+                float4 screenSpace : TEXCOORD1;
+            };
+            
             sampler2D _MainTex;
             float _DeltaX;
             float _DeltaY;
             sampler2D _CameraDepthTexture;
-
+            
             float Sobel(sampler2D tex, float2 uv, float mult)
             {
                 float2 delta = float2(_DeltaX, _DeltaY);
@@ -43,23 +50,34 @@ Shader "Custom/Outline"
                 return saturate(mult * sqrt(hr * hr + vt * vt));
             }
 
-            fixed4 frag (v2f_img IN) : COLOR
+            v2f vert (appdata_base v)
             {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = v.texcoord.xy;
+                o.screenSpace = ComputeScreenPos(o.vertex);
+                return o;
+            }
+            
+            fixed4 frag (v2f i) : COLOR
+            {
+                float2 screenSpaceUV = i.screenSpace.xy / i.screenSpace.w;
+                
                 // Depth value
-                float depth = 10 * tex2D(_CameraDepthTexture, IN.uv);
+                float depth = 10 * tex2D(_CameraDepthTexture, i.uv);
 
                 // Sobel value
-                float s = 1 - depth * saturate(Sobel(_CameraDepthTexture, IN.uv, 10));
+                float s = 1 - depth * saturate(Sobel(_CameraDepthTexture, screenSpaceUV, 10));
 
                 // Return texture color * sobel color (i.e. gives it an outline)
-                return tex2D(_MainTex, IN.uv) * float4 (s,s,s,1);
+                return tex2D(_MainTex, i.uv) * float4 (s,s,s,1);
             }
         ENDCG
         
         Pass
         {
             CGPROGRAM
-            #pragma vertex vert_img
+            #pragma vertex vert
             #pragma fragment frag
             ENDCG
         }
