@@ -3,8 +3,8 @@ Shader "Custom/SobelOutline"
     Properties
     {
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
-        _DeltaX ("Delta X", Float) = 0.01
-        _DeltaY ("Delta Y", Float) = 0.01
+        _OutlineThickness ("Outline Thickness", Float) = 0.01
+        _OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
     }
     SubShader
     {
@@ -22,32 +22,22 @@ Shader "Custom/SobelOutline"
             };
             
             sampler2D _MainTex;
-            float _DeltaX;
-            float _DeltaY;
             sampler2D _CameraDepthTexture;
+            float _OutlineThickness;
+            float4 _OutlineColor;
             
-            float Sobel(sampler2D tex, float2 uv, float mult)
+            float SobelDepth(sampler2D tex, float2 uv, float3 offset)
             {
-                float2 delta = float2(_DeltaX, _DeltaY);
+                float pixelCenter = LinearEyeDepth(tex2D(tex, uv).r);
+                float pixelLeft   = LinearEyeDepth(tex2D(tex, uv - offset.xz).r);
+                float pixelRight  = LinearEyeDepth(tex2D(tex, uv + offset.xz).r);
+                float pixelUp     = LinearEyeDepth(tex2D(tex, uv + offset.zy).r);
+                float pixelDown   = LinearEyeDepth(tex2D(tex, uv - offset.zy).r);
 
-                float4 hr = float4 (0,0,0,0);
-                float4 vt = float4 (0,0,0,0);
-
-                hr += tex2D(tex, (uv + float2 (-1.0, -1.0) * delta)) *  1.0;
-                hr += tex2D(tex, (uv + float2 ( 1.0, -1.0) * delta)) * -1.0;
-                hr += tex2D(tex, (uv + float2 (-1.0,  0.0) * delta)) *  2.0;
-                hr += tex2D(tex, (uv + float2 ( 1.0,  0.0) * delta)) * -2.0;
-                hr += tex2D(tex, (uv + float2 (-1.0,  1.0) * delta)) *  1.0;
-                hr += tex2D(tex, (uv + float2 ( 1.0,  1.0) * delta)) * -1.0;
-                
-                vt += tex2D(tex, (uv + float2 (-1.0, -1.0) * delta)) *  1.0;
-                vt += tex2D(tex, (uv + float2 ( 0.0, -1.0) * delta)) *  2.0;
-                vt += tex2D(tex, (uv + float2 ( 1.0, -1.0) * delta)) *  1.0;
-                vt += tex2D(tex, (uv + float2 (-1.0,  1.0) * delta)) * -1.0;
-                vt += tex2D(tex, (uv + float2 ( 0.0,  1.0) * delta)) * -2.0;
-                vt += tex2D(tex, (uv + float2 ( 1.0,  1.0) * delta)) * -1.0;
-                
-                return saturate(mult * sqrt(hr * hr + vt * vt));
+                return abs(pixelLeft - pixelCenter) +
+                        abs(pixelRight - pixelCenter) +
+                        abs(pixelUp - pixelCenter) +
+                        abs(pixelDown - pixelCenter);
             }
 
             v2f vert (appdata_base v)
@@ -61,16 +51,22 @@ Shader "Custom/SobelOutline"
             
             fixed4 frag (v2f i) : COLOR
             {
-                float2 screenSpaceUV = i.screenSpace.xy / i.screenSpace.w;
+                float3 sceneColor = tex2D(_MainTex, i.uv);
                 
-                // Depth value
-                float depth = 10 * tex2D(_CameraDepthTexture, i.uv);
+                float2 screenSpaceUV = i.screenSpace.xy / i.screenSpace.w;
+                float thickness = (i.screenSpace.z / i.screenSpace.w) * _OutlineThickness;
+                float3 offset = float3(1.0 / _ScreenParams.x, 1.0 / _ScreenParams.y, 0.0) * thickness;
+                
+                float sobelDepth = SobelDepth(_CameraDepthTexture, screenSpaceUV, offset);
 
-                // Sobel value
-                float s = 1 - depth * saturate(Sobel(_CameraDepthTexture, screenSpaceUV, 10));
+                // Outline color is calculated based off texture color, the
+                // outline color rgb and the alpha of the passed in outline color
+                float3 outlineColor = lerp(sceneColor, _OutlineColor.rgb, _OutlineColor.a);
 
-                // Return texture color * sobel color (i.e. gives it an outline)
-                return tex2D(_MainTex, i.uv) * float4 (s,s,s,1);
+                // Calculate final color
+                float3 finalColor = lerp(sceneColor, outlineColor, sobelDepth);
+                
+                return float4(finalColor, 1);
             }
         ENDCG
         
