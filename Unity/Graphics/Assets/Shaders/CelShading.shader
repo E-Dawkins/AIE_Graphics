@@ -4,10 +4,12 @@ Shader "Custom/CelShading"
     {
         _Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
+        _BumpMap ("Normal/Bump Map", 2D) = "bump" {}
         
         [Header(CelShading)]
         _Smoothness ("Band Smoothing", Float) = 5
         _Specular ("Specular", Float) = 400
+        _Fresnel ("Fresnel Amount", Range(0, 1)) = 0.5
         
         [Header(Outline)]
         _OutlineWidth ("Outline Width", Float) = 0.01
@@ -36,11 +38,12 @@ Shader "Custom/CelShading"
         struct Input
         {
             float2 uv_MainTex;
+            float2 uv_BumpMap;
         };
 
-        sampler2D _MainTex;
+        sampler2D _MainTex, _BumpMap;
         fixed4 _Color;
-        float _Smoothness, _Specular;
+        float _Smoothness, _Specular, _Fresnel;
 
         fixed4 LightingCel(SurfaceOutput s, fixed3 lightDir, fixed3 viewDir, float atten)
         {
@@ -61,8 +64,15 @@ Shader "Custom/CelShading"
 
             // Smooths the specular cutoff point
             float specularSmooth = smoothstep(0, 0.01 * _Smoothness, specular);
+
+            // Fresnel lighting
+            float rim = 1 - dot(normal, viewDir);
+            rim = rim * diffuse;
+
+            float fresnelSize = 1 - _Fresnel;
+            float rimSmooth = smoothstep(fresnelSize, fresnelSize * 1.1, rim);
             
-            float3 col = s.Albedo * ((diffuseSmooth + specularSmooth) * _LightColor0 + unity_AmbientSky);
+            float3 col = s.Albedo * ((diffuseSmooth + specularSmooth + rimSmooth) * _LightColor0 + unity_AmbientSky);
             return float4(col, s.Alpha);
         }
 
@@ -71,6 +81,7 @@ Shader "Custom/CelShading"
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             o.Albedo = c.rgb;
             o.Alpha = c.a;
+            o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
         }
         ENDCG
         
