@@ -63,18 +63,18 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _Fresnel: 0.6
+    - _Fresnel: 0.8182678
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _OutlineWidth: 0.02
+    - _OutlineWidth: 0.030276794
     - _Parallax: 0.02
-    - _Smoothness: 8
+    - _Smoothness: 9.648254
     - _SmoothnessTextureChannel: 0
-    - _Specular: 100
+    - _Specular: 132.41882
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
