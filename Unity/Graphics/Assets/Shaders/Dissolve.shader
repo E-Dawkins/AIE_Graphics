@@ -12,7 +12,7 @@ Shader "Custom/Dissolve"
         _DissolveAmount ("Dissolve Amount", Range(0, 1)) = 0.5
         
         [Header(Edge)]
-        [HDR]_EdgeColor ("Edge Color", Color) = (1, 1, 1, 1)
+        _EdgeColor ("Edge Color", Color) = (1, 1, 1, 1)
         _Range ("Edge Range", Range(0, 0.5)) = 0.1
         _Falloff ("Edge Falloff", Range(0, 1)) = 0.1
     }
@@ -42,7 +42,7 @@ Shader "Custom/Dissolve"
         float _DissolveAmount;
         float _Range;
         float _Falloff;
-        float3 _EdgeColor;
+        float4 _EdgeColor;
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
@@ -54,8 +54,8 @@ Shader "Custom/Dissolve"
             clip(isVisible);
             
             float edgeColored = smoothstep(_Range + _Falloff, _Range, isVisible);
-            float3 edgeColor = edgeColored * _EdgeColor;
-            edgeColor *= smoothstep(0, _Falloff, _DissolveAmount);
+            float3 edgeColor = edgeColored * _EdgeColor.rgb;
+            edgeColor *= smoothstep(0, _Falloff, _DissolveAmount) * _EdgeColor.a;
             
             fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
             o.Albedo = c.rgb;

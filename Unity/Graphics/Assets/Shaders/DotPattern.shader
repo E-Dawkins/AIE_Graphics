@@ -5,8 +5,8 @@ Shader "Custom/DotPattern"
         _MainTex ("Texture", 2D) = "white" {}
         _PatternTex ("Pattern Texture", 2D) = "white" {}
         
-        _HighlightColor("Highlight Color",Color) = (1,1,1,1)
-        _Color("Color",Color) = (0.6, 0.6, 0.6, 1)
+        _LightColor("Light Color",Color) = (1,1,1,1)
+        _MidColor("Mid Color",Color) = (0.6, 0.6, 0.6, 1)
         _ShadowColor("Shadow Color",Color) = (0.1, 0.1, 0.1, 1)
         
         _Step1("Step1",Range(0, 1)) = 0.2
@@ -48,8 +48,8 @@ Shader "Custom/DotPattern"
             sampler2D _PatternTex;
             float4 _PatternTex_ST;
             
-            fixed4 _Color;
-            fixed4 _HighlightColor;
+            fixed4 _LightColor;
+            fixed4 _MidColor;
             fixed4 _ShadowColor;
             
             fixed _Granularity;
@@ -88,7 +88,7 @@ Shader "Custom/DotPattern"
                 float highlight = step(_Step2, 0.5 * (pattern + nl));
                 float lighting = step(_Step1, 0.5 * (pattern + nl));
                 
-                return col * ((_HighlightColor * highlight) +(_Color * lighting) + (_ShadowColor * (1 - lighting) * (1 - highlight)));
+                return col * ((_LightColor * highlight) +(_MidColor * lighting) + (_ShadowColor * (1 - lighting) * (1 - highlight)));
             }
             ENDCG
         }

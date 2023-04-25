@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sobel 1
-  m_Shader: {fileID: 4800000, guid: e4f4da69695813b488fc6728b9e9d0b1, type: 3}
+  m_Name: DotPattern 1
+  m_Shader: {fileID: 4800000, guid: a0ee60b30e065ff41a300b2b48c0db02, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -56,33 +56,37 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _PatternTex:
+        m_Texture: {fileID: 2800000, guid: f460d2418544e3b4aadb965ed50812a2, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
-    - _DeltaX: 0.01
-    - _DeltaY: 0.01
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _Granularity: 350
     - _Metallic: 0
     - _Mode: 0
-    - _Mult: 10
     - _OcclusionStrength: 1
-    - _OutlineDensity: 0.1
-    - _OutlineThickness: 300
-    - _OutlineWidth: 200
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Threshold: 0.3
+    - _Step1: 0.17
+    - _Step2: 0.2
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
+    - _Color: {r: 0.54509807, g: 0.5529412, b: 0.5686275, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OutlineColor: {r: 1, g: 0.34901962, b: 0, a: 1}
+    - _HighlightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _LightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MidColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
+    - _ShadowColor: {r: 0.09411765, g: 0.09411765, b: 0.09411765, a: 1}
   m_BuildTextureStacks: []

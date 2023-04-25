@@ -3,19 +3,22 @@ using UnityEngine.UI;
 
 public class ColorPicker : MonoBehaviour
 {
+    [Header("Components")]
     [SerializeField] private Slider rSlider;
     [SerializeField] private Slider gSlider;
     [SerializeField] private Slider bSlider;
     [SerializeField] private Slider aSlider;
-    [SerializeField] private bool useAlpha = true;
-
     [SerializeField] private Image preview;
+    
+    [Header("Color")]
+    [SerializeField] private Color defaultColor;
+    [SerializeField] private bool useAlpha;
 
     private readonly Image[] m_handles = new Image[4];
 
     public Color Color { get; private set; } = Color.black;
 
-    private void Start()
+    private void Awake()
     {
         // Store references to the slider handle images
         m_handles[0] = rSlider.handleRect.GetComponent<Image>();
@@ -25,7 +28,13 @@ public class ColorPicker : MonoBehaviour
         
         // Set slider active state and value, based on useAlpha
         aSlider.gameObject.SetActive(useAlpha);
-        aSlider.value = useAlpha ? aSlider.value : 1;
+        aSlider.value = useAlpha ? aSlider.value : aSlider.maxValue;
+        
+        // Set sliders to default color
+        rSlider.normalizedValue = defaultColor.r;
+        gSlider.normalizedValue = defaultColor.g;
+        bSlider.normalizedValue = defaultColor.b;
+        aSlider.normalizedValue = defaultColor.a;
     }
 
     private void Update()

@@ -672,10 +672,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e426b1169d87cc045b88b66449e46535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  redSlider: {fileID: 5886788627776056684}
-  greenSlider: {fileID: 5886788627132860995}
-  blueSlider: {fileID: 5886788628090969354}
-  alphaSlider: {fileID: 5886788628276368213}
+  rSlider: {fileID: 5886788627776056684}
+  gSlider: {fileID: 5886788627132860995}
+  bSlider: {fileID: 5886788628090969354}
+  aSlider: {fileID: 5886788628276368213}
   useAlpha: 1
   preview: {fileID: 5886788626702376681}
 --- !u!1 &5886788627611498574
