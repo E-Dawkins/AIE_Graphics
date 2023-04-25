@@ -3,36 +3,47 @@ using UnityEngine.UI;
 
 public class ColorPicker : MonoBehaviour
 {
-    [SerializeField] private Slider redSlider;
-    [SerializeField] private Slider greenSlider;
-    [SerializeField] private Slider blueSlider;
-    [SerializeField] private Slider alphaSlider;
+    [SerializeField] private Slider rSlider;
+    [SerializeField] private Slider gSlider;
+    [SerializeField] private Slider bSlider;
+    [SerializeField] private Slider aSlider;
     [SerializeField] private bool useAlpha = true;
 
     [SerializeField] private Image preview;
 
-    private Image[] handles = new Image[4];
+    private readonly Image[] m_handles = new Image[4];
 
-    public Color Color => color;
-    private Color color = Color.black;
+    public Color Color { get; private set; } = Color.black;
 
-    private void Awake()
+    private void Start()
     {
-        handles[0] = redSlider.handleRect.GetComponent<Image>();
-        handles[1] = greenSlider.handleRect.GetComponent<Image>();
-        handles[2] = blueSlider.handleRect.GetComponent<Image>();
-        handles[3] = alphaSlider.handleRect.GetComponent<Image>();
+        // Store references to the slider handle images
+        m_handles[0] = rSlider.handleRect.GetComponent<Image>();
+        m_handles[1] = gSlider.handleRect.GetComponent<Image>();
+        m_handles[2] = bSlider.handleRect.GetComponent<Image>();
+        m_handles[3] = aSlider.handleRect.GetComponent<Image>();
+        
+        // Set slider active state and value, based on useAlpha
+        aSlider.gameObject.SetActive(useAlpha);
+        aSlider.value = useAlpha ? aSlider.value : 1;
     }
 
     private void Update()
     {
-        handles[0].color = new Color(redSlider.value, 0, 0, 1);
-        handles[1].color = new Color(0, greenSlider.value, 0, 1);
-        handles[2].color = new Color(0, 0, blueSlider.value, 1);
-        handles[3].color = new Color(alphaSlider.value, alphaSlider.value, alphaSlider.value, 1);
+        // Store normalized slider values
+        float r = rSlider.normalizedValue;
+        float g = gSlider.normalizedValue;
+        float b = bSlider.normalizedValue;
+        float a = aSlider.normalizedValue;
+        
+        // Set slider colors, based on above values
+        m_handles[0].color = new Color(r, 0, 0, 1);
+        m_handles[1].color = new Color(0, g, 0, 1);
+        m_handles[2].color = new Color(0, 0, b, 1);
+        m_handles[3].color = new Color(a, a, a, 1);
 
-        color = new Color(redSlider.value, greenSlider.value, blueSlider.value, 
-                                useAlpha ? alphaSlider.value : 1);
-        preview.color = color;
+        // Set Color to rgba, then preview to Color
+        Color = new Color(r, g, b, a);
+        preview.color = Color;
     }
 }

@@ -24,16 +24,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Shoot",
-                    "type": "Button",
-                    "id": "db5b46a0-0f37-41f2-ba43-4561ba5d91dc",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Interact",
+                    "name": "Shoulder Switch",
                     "type": "Button",
                     "id": "51786afa-12dd-4598-933d-7756de5e6d07",
                     "expectedControlType": "Button",
@@ -45,24 +36,6 @@
                     "name": "Sprint",
                     "type": "Button",
                     "id": "5f0fcd31-68f1-4a40-b806-f22642db1819",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Jump",
-                    "type": "Button",
-                    "id": "d9f3decb-92b1-487e-a790-3a8ebc2a6c0a",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Grenade",
-                    "type": "Button",
-                    "id": "fd2d32d0-16ab-4f12-a8e1-cc513f7a8bc0",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -138,23 +111,12 @@
                 },
                 {
                     "name": "",
-                    "id": "4bf261b6-7bbc-4fc8-857b-a610e00048e1",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Shoot",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "5a04851f-2f6f-46f1-893b-b3e981391369",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Interact",
+                    "action": "Shoulder Switch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -166,28 +128,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Sprint",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "58cebeee-9c52-4143-9d41-4921de1839f5",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f72e7ed9-7665-40e3-b18f-e1b6c1c5a95a",
-                    "path": "<Keyboard>/g",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Grenade",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

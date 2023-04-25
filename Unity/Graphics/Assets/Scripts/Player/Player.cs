@@ -26,12 +26,14 @@ public class Player : MonoBehaviour
     // Private fields
     private float m_speed;
     private CinemachinePOV m_pov;
+    private CinemachineFramingTransposer m_transposer;
 
     private void Awake()
     {
         m_animator = GetComponent<Animator>();
         m_controller = GetComponent<CharacterController>();
         m_pov = virtualCamera.GetCinemachineComponent<CinemachinePOV>();
+        m_transposer = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
     }
 
     public void OnMove(InputAction.CallbackContext _value)
@@ -49,7 +51,15 @@ public class Player : MonoBehaviour
             m_isSprinting = false;
     }
 
-    public void OnLook(InputAction.CallbackContext _value) => m_shouldLook = _value.ReadValueAsButton();
+    public void OnLook(InputAction.CallbackContext _value)
+    {
+        m_shouldLook = _value.ReadValueAsButton();
+    }
+
+    public void OnShoulderSwitch(InputAction.CallbackContext _value)
+    {
+        m_transposer.m_ScreenX = 1 - m_transposer.m_ScreenX;
+    }
 
     private void FixedUpdate()
     {

@@ -3,7 +3,7 @@ Shader "Custom/SobelOutline"
     Properties
     {
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
-        _OutlineThickness ("Outline Thickness", Float) = 0.01
+        _OutlineWidth ("Outline Thickness", Float) = 0.01
         _OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
     }
     SubShader
@@ -23,7 +23,7 @@ Shader "Custom/SobelOutline"
             
             sampler2D _MainTex;
             sampler2D _CameraDepthTexture;
-            float _OutlineThickness;
+            float _OutlineWidth;
             float4 _OutlineColor;
             
             float SobelDepth(sampler2D tex, float2 uv, float3 offset)
@@ -34,10 +34,12 @@ Shader "Custom/SobelOutline"
                 float pixelUp     = LinearEyeDepth(tex2D(tex, uv + offset.zy).r);
                 float pixelDown   = LinearEyeDepth(tex2D(tex, uv - offset.zy).r);
 
-                return abs(pixelLeft - pixelCenter) +
+                float absValue = abs(pixelLeft - pixelCenter) +
                         abs(pixelRight - pixelCenter) +
                         abs(pixelUp - pixelCenter) +
                         abs(pixelDown - pixelCenter);
+                
+                return saturate(absValue);
             }
 
             v2f vert (appdata_base v)
@@ -54,17 +56,13 @@ Shader "Custom/SobelOutline"
                 float3 sceneColor = tex2D(_MainTex, i.uv);
                 
                 float2 screenSpaceUV = i.screenSpace.xy / i.screenSpace.w;
-                float thickness = (i.screenSpace.z / i.screenSpace.w) * _OutlineThickness;
+                float thickness = (i.screenSpace.z / i.screenSpace.w) * _OutlineWidth;
                 float3 offset = float3(1.0 / _ScreenParams.x, 1.0 / _ScreenParams.y, 0.0) * thickness;
                 
                 float sobelDepth = SobelDepth(_CameraDepthTexture, screenSpaceUV, offset);
 
-                // Outline color is calculated based off texture color, the
-                // outline color rgb and the alpha of the passed in outline color
-                float3 outlineColor = lerp(sceneColor, _OutlineColor.rgb, _OutlineColor.a);
-
-                // Calculate final color
-                float3 finalColor = lerp(sceneColor, outlineColor, sobelDepth);
+                // Calculate final color, based off sobel depth value
+                float3 finalColor = lerp(sceneColor, _OutlineColor, sobelDepth);
                 
                 return float4(finalColor, 1);
             }

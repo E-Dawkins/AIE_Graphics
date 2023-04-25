@@ -46,16 +46,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Shoot"",
-                    ""type"": ""Button"",
-                    ""id"": ""db5b46a0-0f37-41f2-ba43-4561ba5d91dc"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Interact"",
+                    ""name"": ""Shoulder Switch"",
                     ""type"": ""Button"",
                     ""id"": ""51786afa-12dd-4598-933d-7756de5e6d07"",
                     ""expectedControlType"": ""Button"",
@@ -67,24 +58,6 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""name"": ""Sprint"",
                     ""type"": ""Button"",
                     ""id"": ""5f0fcd31-68f1-4a40-b806-f22642db1819"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Jump"",
-                    ""type"": ""Button"",
-                    ""id"": ""d9f3decb-92b1-487e-a790-3a8ebc2a6c0a"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Grenade"",
-                    ""type"": ""Button"",
-                    ""id"": ""fd2d32d0-16ab-4f12-a8e1-cc513f7a8bc0"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -160,23 +133,12 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""4bf261b6-7bbc-4fc8-857b-a610e00048e1"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Shoot"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""5a04851f-2f6f-46f1-893b-b3e981391369"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Interact"",
+                    ""action"": ""Shoulder Switch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -190,28 +152,6 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""action"": ""Sprint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""58cebeee-9c52-4143-9d41-4921de1839f5"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""f72e7ed9-7665-40e3-b18f-e1b6c1c5a95a"",
-                    ""path"": ""<Keyboard>/g"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Grenade"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -222,11 +162,8 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         m_PlayerGameplay = asset.FindActionMap("PlayerGameplay", throwIfNotFound: true);
         m_PlayerGameplay_Movement = m_PlayerGameplay.FindAction("Movement", throwIfNotFound: true);
         m_PlayerGameplay_Look = m_PlayerGameplay.FindAction("Look", throwIfNotFound: true);
-        m_PlayerGameplay_Shoot = m_PlayerGameplay.FindAction("Shoot", throwIfNotFound: true);
-        m_PlayerGameplay_Interact = m_PlayerGameplay.FindAction("Interact", throwIfNotFound: true);
+        m_PlayerGameplay_ShoulderSwitch = m_PlayerGameplay.FindAction("Shoulder Switch", throwIfNotFound: true);
         m_PlayerGameplay_Sprint = m_PlayerGameplay.FindAction("Sprint", throwIfNotFound: true);
-        m_PlayerGameplay_Jump = m_PlayerGameplay.FindAction("Jump", throwIfNotFound: true);
-        m_PlayerGameplay_Grenade = m_PlayerGameplay.FindAction("Grenade", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -288,22 +225,16 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
     private IPlayerGameplayActions m_PlayerGameplayActionsCallbackInterface;
     private readonly InputAction m_PlayerGameplay_Movement;
     private readonly InputAction m_PlayerGameplay_Look;
-    private readonly InputAction m_PlayerGameplay_Shoot;
-    private readonly InputAction m_PlayerGameplay_Interact;
+    private readonly InputAction m_PlayerGameplay_ShoulderSwitch;
     private readonly InputAction m_PlayerGameplay_Sprint;
-    private readonly InputAction m_PlayerGameplay_Jump;
-    private readonly InputAction m_PlayerGameplay_Grenade;
     public struct PlayerGameplayActions
     {
         private @Inputs m_Wrapper;
         public PlayerGameplayActions(@Inputs wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_PlayerGameplay_Movement;
         public InputAction @Look => m_Wrapper.m_PlayerGameplay_Look;
-        public InputAction @Shoot => m_Wrapper.m_PlayerGameplay_Shoot;
-        public InputAction @Interact => m_Wrapper.m_PlayerGameplay_Interact;
+        public InputAction @ShoulderSwitch => m_Wrapper.m_PlayerGameplay_ShoulderSwitch;
         public InputAction @Sprint => m_Wrapper.m_PlayerGameplay_Sprint;
-        public InputAction @Jump => m_Wrapper.m_PlayerGameplay_Jump;
-        public InputAction @Grenade => m_Wrapper.m_PlayerGameplay_Grenade;
         public InputActionMap Get() { return m_Wrapper.m_PlayerGameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -319,21 +250,12 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 @Look.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnLook;
                 @Look.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnLook;
                 @Look.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnLook;
-                @Shoot.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnShoot;
-                @Shoot.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnShoot;
-                @Shoot.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnShoot;
-                @Interact.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnInteract;
-                @Interact.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnInteract;
-                @Interact.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnInteract;
+                @ShoulderSwitch.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnShoulderSwitch;
+                @ShoulderSwitch.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnShoulderSwitch;
+                @ShoulderSwitch.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnShoulderSwitch;
                 @Sprint.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSprint;
                 @Sprint.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSprint;
                 @Sprint.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSprint;
-                @Jump.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnJump;
-                @Jump.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnJump;
-                @Jump.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnJump;
-                @Grenade.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnGrenade;
-                @Grenade.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnGrenade;
-                @Grenade.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnGrenade;
             }
             m_Wrapper.m_PlayerGameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -344,21 +266,12 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 @Look.started += instance.OnLook;
                 @Look.performed += instance.OnLook;
                 @Look.canceled += instance.OnLook;
-                @Shoot.started += instance.OnShoot;
-                @Shoot.performed += instance.OnShoot;
-                @Shoot.canceled += instance.OnShoot;
-                @Interact.started += instance.OnInteract;
-                @Interact.performed += instance.OnInteract;
-                @Interact.canceled += instance.OnInteract;
+                @ShoulderSwitch.started += instance.OnShoulderSwitch;
+                @ShoulderSwitch.performed += instance.OnShoulderSwitch;
+                @ShoulderSwitch.canceled += instance.OnShoulderSwitch;
                 @Sprint.started += instance.OnSprint;
                 @Sprint.performed += instance.OnSprint;
                 @Sprint.canceled += instance.OnSprint;
-                @Jump.started += instance.OnJump;
-                @Jump.performed += instance.OnJump;
-                @Jump.canceled += instance.OnJump;
-                @Grenade.started += instance.OnGrenade;
-                @Grenade.performed += instance.OnGrenade;
-                @Grenade.canceled += instance.OnGrenade;
             }
         }
     }
@@ -367,10 +280,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
-        void OnShoot(InputAction.CallbackContext context);
-        void OnInteract(InputAction.CallbackContext context);
+        void OnShoulderSwitch(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
-        void OnJump(InputAction.CallbackContext context);
-        void OnGrenade(InputAction.CallbackContext context);
     }
 }

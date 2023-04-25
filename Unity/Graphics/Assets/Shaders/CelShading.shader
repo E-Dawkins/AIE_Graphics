@@ -7,7 +7,7 @@ Shader "Custom/CelShading"
         _BumpMap ("Normal/Bump Map", 2D) = "bump" {}
         
         [Header(CelShading)]
-        _Smoothness ("Band Smoothing", Float) = 5
+        _Smoothness ("Smoothing", Float) = 5
         _Specular ("Specular", Float) = 400
         _Fresnel ("Fresnel Amount", Range(0, 1)) = 0.5
         
@@ -17,9 +17,6 @@ Shader "Custom/CelShading"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        LOD 200
-
         Stencil
         {
             Ref 1

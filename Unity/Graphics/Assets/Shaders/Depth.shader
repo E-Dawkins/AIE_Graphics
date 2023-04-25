@@ -1,5 +1,11 @@
 Shader "Custom/Depth"
 {
+    Properties
+    {
+        _Multiplier ("Depth Multiplier", Range(10, 300)) = 10
+        _Tint ("Depth Tint", Color) = (1, 1, 1, 1)
+    }
+    
     SubShader
     {
         Tags { "RenderType"="Opaque" }
@@ -21,6 +27,8 @@ Shader "Custom/Depth"
             };
             
             sampler2D _CameraDepthTexture;
+            float _Multiplier;
+            float4 _Tint;
 
             v2f vert (appdata_base v)
             {
@@ -38,7 +46,7 @@ Shader "Custom/Depth"
                 float depth = Linear01Depth(SAMPLE_DEPTH_TEXTURE(
                     _CameraDepthTexture, screenSpaceUV));
                 
-                return fixed4(depth, depth, depth, 1);
+                return depth * _Multiplier * _Tint;
             }
             ENDCG
         }
