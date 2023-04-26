@@ -1,5 +1,4 @@
-﻿using System;
-using Cinemachine;
+﻿using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -61,6 +60,12 @@ public class Player : MonoBehaviour
         m_transposer.m_ScreenX = 1 - m_transposer.m_ScreenX;
     }
 
+    public void OnInteract(InputAction.CallbackContext _value)
+    {
+        if (_value.started)
+            m_animator.SetTrigger("PointTrigger");
+    }
+
     private void FixedUpdate()
     {
         m_speed = m_isSprinting ? sprintSpeed : (!m_isMoving ? 0 : moveSpeed);
@@ -73,7 +78,8 @@ public class Player : MonoBehaviour
 
         if (move != Vector3.zero)
         {
-            transform.forward = Vector3.Lerp(transform.forward, move, Time.fixedDeltaTime * rotateSpeed);
+            Quaternion rotation = Quaternion.Euler(0, virtualCamera.transform.eulerAngles.y, 0);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.fixedDeltaTime * rotateSpeed);
         }
 
         // Update POV speeds to only work when we are pressing look button
@@ -91,6 +97,10 @@ public class Player : MonoBehaviour
 
     private void CasualMovement(float _dt)
     {
-        m_animator.SetFloat("Speed", m_isMoving ? m_speed : 0, 0.1f, _dt);
+        //m_animator.SetFloat("Speed", m_isMoving ? m_speed : 0, 0.1f, _dt);
+        float speed = m_isMoving ? m_speed : 0;
+        Vector2 direction = m_direction.normalized;
+        m_animator.SetFloat("Forward", direction.y * speed, 0.1f, _dt);
+        m_animator.SetFloat("Right", direction.x * speed, 0.1f, _dt);
     }
 }

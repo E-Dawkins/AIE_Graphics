@@ -31,10 +31,16 @@ public class ColorPicker : MonoBehaviour
         aSlider.value = useAlpha ? aSlider.value : aSlider.maxValue;
         
         // Set sliders to default color
-        rSlider.normalizedValue = defaultColor.r;
-        gSlider.normalizedValue = defaultColor.g;
-        bSlider.normalizedValue = defaultColor.b;
-        aSlider.normalizedValue = defaultColor.a;
+        rSlider.value = defaultColor.r * rSlider.maxValue;
+        gSlider.value = defaultColor.g * gSlider.maxValue;
+        bSlider.value = defaultColor.b * bSlider.maxValue;
+        aSlider.value = defaultColor.a * aSlider.maxValue;
+
+        // Invoke slider value changed event
+        rSlider.onValueChanged.Invoke(rSlider.value);
+        gSlider.onValueChanged.Invoke(gSlider.value);
+        bSlider.onValueChanged.Invoke(bSlider.value);
+        aSlider.onValueChanged.Invoke(aSlider.value);
     }
 
     private void Update()

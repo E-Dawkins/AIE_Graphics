@@ -87,8 +87,12 @@ Shader "Custom/DotPattern"
                 // Next we can use our step values with the step function to choose between the highlight, base and shadow colors
                 float highlight = step(_Step2, 0.5 * (pattern + nl));
                 float lighting = step(_Step1, 0.5 * (pattern + nl));
+
+                float4 finalLightCol = _LightColor * highlight;
+                float4 finalMidCol = _MidColor * lighting;
+                float4 finalShadowCol = _ShadowColor * (1 - lighting) * (1 - highlight);
                 
-                return col * ((_LightColor * highlight) +(_MidColor * lighting) + (_ShadowColor * (1 - lighting) * (1 - highlight)));
+                return col * (finalLightCol + finalMidCol + finalShadowCol);
             }
             ENDCG
         }

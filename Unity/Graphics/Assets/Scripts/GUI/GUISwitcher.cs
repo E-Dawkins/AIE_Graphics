@@ -32,16 +32,15 @@ public class GUISwitcher : MonoBehaviour
         else if (m_curIndex >= guiObjects.Count) m_curIndex = 0;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
-        // Skip update for first frame, allows other UI
-        // scripts 1 frame to 'catch-up' (mainly sliders)
+        // Gives other GUI elements 1 frame to 'catch-up'
         if (m_firstFrame)
         {
             m_firstFrame = false;
             return;
         }
-        
+
         // Set non-current objects to false, and vice versa
         for (int i = 0; i < guiObjects.Count; i++) 
             guiObjects[i].SetActive(i == m_curIndex);

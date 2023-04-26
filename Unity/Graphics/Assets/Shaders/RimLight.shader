@@ -46,7 +46,7 @@ Shader "Custom/RimLight"
             o.Smoothness = _Glossiness;
 
             half rim = 1.0 - saturate(dot(normalize(IN.viewDir), o.Normal));
-            o.Emission = _RimColor.rgb * pow(rim, _RimPower);
+            o.Emission = _RimColor.rgb * pow(rim, _RimPower) * _RimColor.a;
         }
         ENDCG
     }

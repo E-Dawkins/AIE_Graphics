@@ -2,7 +2,7 @@ Shader "Custom/Blur"
 {
     Properties
     {
-        _BlurStrength ("Blur Strength", Int) = 1
+        _BlurStrength ("Blur Strength", Float) = 1
     }
     
     SubShader
