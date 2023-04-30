@@ -10,11 +10,13 @@ public class MaterialColorPicker : MonoBehaviour
 
     private void Awake()
     {
+        // Store color picker component
         m_picker = GetComponent<ColorPicker>();
     }
 
     private void Update()
     {
+        // Set material color with 'colorReference' to picker's color
         material.SetColor(colorReference, m_picker.Color);
     }
 }

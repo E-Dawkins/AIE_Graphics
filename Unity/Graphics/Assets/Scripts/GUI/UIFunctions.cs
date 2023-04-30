@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class UIFunctions : MonoBehaviour
 {
-    public void OnQuit()
-    {
-        Application.Quit();
-    }
+    // Function that quits the game when called
+    public void OnQuit() => Application.Quit();
 }

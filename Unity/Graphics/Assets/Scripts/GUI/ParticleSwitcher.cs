@@ -37,7 +37,10 @@ public class ParticleSwitcher : MonoBehaviour
 
     private void LateUpdate()
     {
+        // Update the buttons current particle system instance...
         particleButton.particlePrefab = particleSystems[m_curIndex];
+        
+        // ...and the label text to the prefab's name
         text.text = particleButton.particlePrefab.name;
     }
 }

@@ -12,8 +12,10 @@ public class ParticleButton : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        // If current particle system has been set...
         if (m_instance == null)
         {
+            // ...then instantiate the instance
             ParticleSystem instance = Instantiate(particlePrefab, prefabParent);
             m_instance = instance;
             m_instance.gameObject.SetActive(true);
@@ -22,8 +24,10 @@ public class ParticleButton : MonoBehaviour, IPointerDownHandler, IPointerUpHand
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        // If current particle system has been set...
         if (m_instance != null)
         {
+            // ...then stop the simulation and clear the reference
             m_instance.Stop();
             m_instance = null;
         }
