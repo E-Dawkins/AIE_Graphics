@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float sprintSpeed = 3;
     [SerializeField] private float rotateSpeed = 0.1f;
     [SerializeField] private Vector2 lookSpeeds = new(100, 200);
-    
+
     // Set on awake
     private Animator m_animator;
     private CharacterController m_controller;
@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     private float m_speed;
     private CinemachinePOV m_pov;
     private CinemachineFramingTransposer m_transposer;
+    private float lookMulti = 1;
 
     private void Awake()
     {
@@ -66,6 +67,15 @@ public class Player : MonoBehaviour
             m_animator.SetTrigger("PointTrigger");
     }
 
+    public void OnSensitivty(InputAction.CallbackContext _value)
+    {
+        var val = _value.ReadValue<float>();
+        if (val == 0) return;
+        
+        lookMulti += Mathf.Sign(val) * 0.1f;
+        if (lookMulti <= 0) lookMulti = 0.1f;
+    }
+
     private void FixedUpdate()
     {
         m_speed = m_isSprinting ? sprintSpeed : (!m_isMoving ? 0 : moveSpeed);
@@ -85,8 +95,8 @@ public class Player : MonoBehaviour
         // Update POV speeds to only work when we are pressing look button
         if (m_shouldLook)
         {
-            m_pov.m_HorizontalAxis.m_MaxSpeed = lookSpeeds.x;
-            m_pov.m_VerticalAxis.m_MaxSpeed = lookSpeeds.y;
+            m_pov.m_HorizontalAxis.m_MaxSpeed = lookSpeeds.x * lookMulti;
+            m_pov.m_VerticalAxis.m_MaxSpeed = lookSpeeds.y * lookMulti;
         }
         else
         {

@@ -71,6 +71,15 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sensitivity"",
+                    ""type"": ""Value"",
+                    ""id"": ""0437a503-3472-494c-b825-2c85ec5656a4"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -172,6 +181,39 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Mouse Scroll"",
+                    ""id"": ""d9a584b1-26af-4916-b853-5a66de0e9e28"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sensitivity"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""50e1ba93-b08a-4cd8-8f0d-273d03f4e4b9"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sensitivity"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""1d1fd910-dc3f-4135-a61b-0443e70900f7"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sensitivity"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -185,6 +227,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         m_PlayerGameplay_ShoulderSwitch = m_PlayerGameplay.FindAction("Shoulder Switch", throwIfNotFound: true);
         m_PlayerGameplay_Sprint = m_PlayerGameplay.FindAction("Sprint", throwIfNotFound: true);
         m_PlayerGameplay_Interact = m_PlayerGameplay.FindAction("Interact", throwIfNotFound: true);
+        m_PlayerGameplay_Sensitivity = m_PlayerGameplay.FindAction("Sensitivity", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -249,6 +292,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerGameplay_ShoulderSwitch;
     private readonly InputAction m_PlayerGameplay_Sprint;
     private readonly InputAction m_PlayerGameplay_Interact;
+    private readonly InputAction m_PlayerGameplay_Sensitivity;
     public struct PlayerGameplayActions
     {
         private @Inputs m_Wrapper;
@@ -258,6 +302,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         public InputAction @ShoulderSwitch => m_Wrapper.m_PlayerGameplay_ShoulderSwitch;
         public InputAction @Sprint => m_Wrapper.m_PlayerGameplay_Sprint;
         public InputAction @Interact => m_Wrapper.m_PlayerGameplay_Interact;
+        public InputAction @Sensitivity => m_Wrapper.m_PlayerGameplay_Sensitivity;
         public InputActionMap Get() { return m_Wrapper.m_PlayerGameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -282,6 +327,9 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 @Interact.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnInteract;
                 @Interact.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnInteract;
                 @Interact.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnInteract;
+                @Sensitivity.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSensitivity;
+                @Sensitivity.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSensitivity;
+                @Sensitivity.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSensitivity;
             }
             m_Wrapper.m_PlayerGameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -301,6 +349,9 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @Sensitivity.started += instance.OnSensitivity;
+                @Sensitivity.performed += instance.OnSensitivity;
+                @Sensitivity.canceled += instance.OnSensitivity;
             }
         }
     }
@@ -312,5 +363,6 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         void OnShoulderSwitch(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnSensitivity(InputAction.CallbackContext context);
     }
 }
