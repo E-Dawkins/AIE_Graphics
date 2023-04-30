@@ -65,8 +65,7 @@ public class GenerateQuad : MonoBehaviour
 
         Texture2D texture = new(64, 64, TextureFormat.RGBA32, false)
         {
-            filterMode = FilterMode.Point,
-            alphaIsTransparency = true
+            filterMode = FilterMode.Point
         };
 
         bool isGrey = true;

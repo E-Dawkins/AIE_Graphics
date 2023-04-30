@@ -80,6 +80,15 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Quit"",
+                    ""type"": ""Button"",
+                    ""id"": ""eeb56ac8-1735-463a-b9e1-56d96d560e62"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -163,7 +172,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""22d86158-53f5-449c-b4d4-888b0bb1e724"",
-                    ""path"": ""<Keyboard>/leftShift"",
+                    ""path"": ""<Keyboard>/shift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -214,6 +223,17 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                     ""action"": ""Sensitivity"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bbc8cd05-f7ca-4d4e-bb91-c032dac2f133"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Quit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -228,6 +248,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         m_PlayerGameplay_Sprint = m_PlayerGameplay.FindAction("Sprint", throwIfNotFound: true);
         m_PlayerGameplay_Interact = m_PlayerGameplay.FindAction("Interact", throwIfNotFound: true);
         m_PlayerGameplay_Sensitivity = m_PlayerGameplay.FindAction("Sensitivity", throwIfNotFound: true);
+        m_PlayerGameplay_Quit = m_PlayerGameplay.FindAction("Quit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -293,6 +314,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerGameplay_Sprint;
     private readonly InputAction m_PlayerGameplay_Interact;
     private readonly InputAction m_PlayerGameplay_Sensitivity;
+    private readonly InputAction m_PlayerGameplay_Quit;
     public struct PlayerGameplayActions
     {
         private @Inputs m_Wrapper;
@@ -303,6 +325,7 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         public InputAction @Sprint => m_Wrapper.m_PlayerGameplay_Sprint;
         public InputAction @Interact => m_Wrapper.m_PlayerGameplay_Interact;
         public InputAction @Sensitivity => m_Wrapper.m_PlayerGameplay_Sensitivity;
+        public InputAction @Quit => m_Wrapper.m_PlayerGameplay_Quit;
         public InputActionMap Get() { return m_Wrapper.m_PlayerGameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -330,6 +353,9 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 @Sensitivity.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSensitivity;
                 @Sensitivity.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSensitivity;
                 @Sensitivity.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSensitivity;
+                @Quit.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnQuit;
+                @Quit.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnQuit;
+                @Quit.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnQuit;
             }
             m_Wrapper.m_PlayerGameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -352,6 +378,9 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
                 @Sensitivity.started += instance.OnSensitivity;
                 @Sensitivity.performed += instance.OnSensitivity;
                 @Sensitivity.canceled += instance.OnSensitivity;
+                @Quit.started += instance.OnQuit;
+                @Quit.performed += instance.OnQuit;
+                @Quit.canceled += instance.OnQuit;
             }
         }
     }
@@ -364,5 +393,6 @@ public partial class @Inputs : IInputActionCollection2, IDisposable
         void OnSprint(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnSensitivity(InputAction.CallbackContext context);
+        void OnQuit(InputAction.CallbackContext context);
     }
 }
