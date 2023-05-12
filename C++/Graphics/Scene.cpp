@@ -27,7 +27,7 @@ Scene::~Scene()
     // Delete cameras
     for (auto it = m_cameras.begin(); it != m_cameras.end(); ++it)
     {
-        delete &it;
+        delete *it;
     }
 }
 
@@ -115,6 +115,15 @@ void Scene::ImGuiRefresher()
             vec3 newScale = m_instances[i]->GetScale();
             ImGui::DragFloat3((iString + " : Scale").c_str(),
                 &newScale[0], 0.05f);
+
+            // Stop scale going negative
+            if (newScale.x <= 0)
+                newScale.x = 0.001f;
+            if (newScale.y <= 0)
+                newScale.y = 0.001f;
+            if (newScale.z <= 0)
+                newScale.z = 0.001f;
+            
             m_instances[i]->SetScale(newScale);
 
             // Is Active
